@@ -49,7 +49,7 @@ Mỗi JOB phải có một mục riêng, giữ nguyên lịch sử thay vì ghi 
 - Trạng thái: DONE
 - Thời gian bắt đầu: 2026-06-27T15:44:18+07:00
 - Thời gian kết thúc: 2026-06-27T15:56:00+07:00
-- Phiên bản code: commit `daea68b` (Initial commit)
+- Phiên bản code: commit `39c5b7c` (chứa các fix theo review)
 - File đã tạo/sửa:
   - [package.json](file:///C:/Users/dohuy/Downloads/01.%20Documents/May_thuy_luc/package.json) (Sửa tên package, sửa typo)
   - [tsconfig.app.json](file:///C:/Users/dohuy/Downloads/01.%20Documents/May_thuy_luc/tsconfig.app.json) (Bật `strict` mode)
