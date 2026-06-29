@@ -9,7 +9,7 @@ export interface AppState {
   // --- Source State ---
   angles: JointAngles;
   payload: number;    // kg
-  throttle: number;   // 0.0 .. 1.0 (độ mở ga động cơ)
+  throttle: number;   // 0.0 .. 1.0
   mode: 'MANUAL' | 'AUTOMATIC';
   cycleStatus: CycleStepName;
   cycleStepIndex: number;
@@ -29,14 +29,21 @@ export interface AppState {
   removeWarning: (code: string) => void;
   clearWarnings: () => void;
   
-  // --- Cycle Controls (Skeleton for automatic simulation) ---
+  // --- Animation Controls ---
+  animateToAngles: (targetAngles: JointAngles, duration?: number) => void;
+  stopAnimation: () => void;
+  
+  // --- Cycle Controls ---
   startCycle: () => void;
   pauseCycle: () => void;
   resumeCycle: () => void;
   resetCycle: () => void;
 }
 
-export const useSimulationStore = create<AppState>((set) => ({
+// Biến cục bộ trong module để lưu trữ handle của requestAnimationFrame
+let activeAnimationId: number | null = null;
+
+export const useSimulationStore = create<AppState>((set, get) => ({
   // Baseline initial state
   angles: {
     boom: 30,
@@ -56,10 +63,8 @@ export const useSimulationStore = create<AppState>((set) => ({
   // Implement actions
   setJointAngle: (joint, value) => set((state) => {
     const nextAngles = { ...state.angles, [joint]: value };
-    // Chạy qua constraint engine để tự động cắt biên
     const { clampedAngles, warnings } = clampJointAngles(nextAngles, geometryConfig);
     
-    // Gộp cảnh báo cơ học mới và giữ các cảnh báo phi cơ học khác
     const nextWarnings = new Set<string>(state.warnings);
     nextWarnings.delete('BOOM_LIMIT');
     nextWarnings.delete('ARM_LIMIT');
@@ -91,6 +96,52 @@ export const useSimulationStore = create<AppState>((set) => ({
   
   clearWarnings: () => set({ warnings: new Set() }),
   
+  // Hủy animation đang chạy
+  stopAnimation: () => {
+    if (activeAnimationId !== null) {
+      cancelAnimationFrame(activeAnimationId);
+      activeAnimationId = null;
+    }
+  },
+  
+  // Nội suy chuyển động mượt tới góc mục tiêu
+  animateToAngles: (targetAngles, duration = 1000) => {
+    // 1. Hủy animation cũ nếu có
+    get().stopAnimation();
+    
+    const startAngles = { ...get().angles };
+    const startTime = performance.now();
+    
+    const tick = (now: number) => {
+      const elapsed = now - startTime;
+      const t = Math.min(elapsed / duration, 1.0);
+      
+      // Hàm smoothstep làm mượt gia tốc (Cubic Ease-In-Out)
+      const tSmooth = t * t * (3.0 - 2.0 * t);
+      
+      const nextAngles = {
+        boom: startAngles.boom + (targetAngles.boom - startAngles.boom) * tSmooth,
+        arm: startAngles.arm + (targetAngles.arm - startAngles.arm) * tSmooth,
+        bucket: startAngles.bucket + (targetAngles.bucket - startAngles.bucket) * tSmooth,
+      };
+      
+      // Áp dụng góc nội suy
+      get().setJointAngle('boom', nextAngles.boom);
+      get().setJointAngle('arm', nextAngles.arm);
+      get().setJointAngle('bucket', nextAngles.bucket);
+      
+      if (t < 1.0) {
+        activeAnimationId = requestAnimationFrame(tick);
+      } else {
+        activeAnimationId = null;
+        set({ simStatus: 'IDLE' });
+      }
+    };
+    
+    set({ simStatus: 'RUNNING' });
+    activeAnimationId = requestAnimationFrame(tick);
+  },
+  
   startCycle: () => set({
     mode: 'AUTOMATIC',
     cycleStatus: 'APPROACH',
@@ -103,14 +154,18 @@ export const useSimulationStore = create<AppState>((set) => ({
   pauseCycle: () => set({ simStatus: 'PAUSED' }),
   resumeCycle: () => set({ simStatus: 'RUNNING' }),
   
-  resetCycle: () => set({
-    mode: 'MANUAL',
-    cycleStatus: 'IDLE',
-    cycleStepIndex: 0,
-    cycleOverallProgress: 0,
-    stepProgress: 0,
-    simStatus: 'IDLE',
-    angles: { boom: 30, arm: 30, bucket: 0 },
-    warnings: new Set(),
-  }),
+  resetCycle: () => {
+    get().stopAnimation();
+    set({
+      mode: 'MANUAL',
+      cycleStatus: 'IDLE',
+      cycleStepIndex: 0,
+      cycleOverallProgress: 0,
+      stepProgress: 0,
+      simStatus: 'IDLE',
+      angles: { boom: 30, arm: 30, bucket: 0 },
+      warnings: new Set(),
+    });
+  },
 }));
+export type { JointAngles, SimStatus, CycleStepName };

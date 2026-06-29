@@ -125,3 +125,25 @@
     fill-opacity: 1;
   }
 }
+
+.titleGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.debugCheckboxLabel {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.75rem;
+  color: #a1a1aa;
+  cursor: pointer;
+  user-select: none;
+}
+
+.checkboxInput {
+  cursor: pointer;
+  accent-color: #22d3ee;
+}
+

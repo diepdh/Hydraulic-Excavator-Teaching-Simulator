@@ -1,4 +1,5 @@
 import React from 'react';
+import { useManualControl } from '../../features/manual-control/useManualControl';
 import { useSimulationStore } from '../../store/simulationStore';
 import { presetsConfig } from '../../config/presets';
 import { geometryConfig } from '../../config/geometry';
@@ -10,23 +11,19 @@ export const ControlPanel: React.FC = () => {
     payload,
     throttle,
     mode,
-    cycleStatus,
     simStatus,
     setJointAngle,
     setPayload,
     setThrottle,
-    startCycle,
-    pauseCycle,
-    resumeCycle,
-    resetCycle,
-  } = useSimulationStore();
+    applyPreset,
+  } = useManualControl();
   
-  // Set angles directly for now (in later jobs, we will implement smooth interpolations)
-  const handlePresetClick = (targetAngles: typeof angles) => {
-    setJointAngle('boom', targetAngles.boom);
-    setJointAngle('arm', targetAngles.arm);
-    setJointAngle('bucket', targetAngles.bucket);
-  };
+  // Read other state from store
+  const cycleStatus = useSimulationStore((state) => state.cycleStatus);
+  const startCycle = useSimulationStore((state) => state.startCycle);
+  const pauseCycle = useSimulationStore((state) => state.pauseCycle);
+  const resumeCycle = useSimulationStore((state) => state.resumeCycle);
+  const resetCycle = useSimulationStore((state) => state.resetCycle);
   
   return (
     <div className={styles.controlPanel}>
@@ -130,7 +127,7 @@ export const ControlPanel: React.FC = () => {
             <button
               key={p.name}
               className={styles.btnPreset}
-              onClick={() => handlePresetClick(p.angles)}
+              onClick={() => applyPreset(p.angles)}
               disabled={mode === 'AUTOMATIC'}
             >
               {p.label}
