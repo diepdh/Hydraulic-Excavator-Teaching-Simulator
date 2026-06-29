@@ -359,6 +359,43 @@
       </div>
     </section>
 
+    <section>
+      <h2>6. Hướng dẫn cài đặt & khởi chạy ứng dụng</h2>
+      <p>Ứng dụng được xây dựng trên nền tảng React + TypeScript + Vite. Để bảo mật, trình duyệt chặn không cho phép chạy trực tiếp các Module JavaScript từ tệp tin cục bộ khi click đúp vào <code>index.html</code> (gặp lỗi CORS). Anh hãy thực hiện các bước sau để khởi chạy ứng dụng:</p>
+      
+      <div class="step-list">
+        <div class="step-item">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <h4>Mở cửa sổ dòng lệnh (Terminal)</h4>
+            <p>Mở ứng dụng <strong>PowerShell</strong> hoặc <strong>Command Prompt (CMD)</strong> có sẵn trên máy tính Windows của anh.</p>
+          </div>
+        </div>
+
+        <div class="step-item">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <h4>Di chuyển vào thư mục dự án</h4>
+            <p>Dán dòng lệnh di chuyển thư mục dưới đây vào cửa sổ Terminal và ấn <strong>Enter</strong>:</p>
+            <div class="code-block">cd "C:\Users\dohuy\Downloads\01. Documents\May_thuy_luc"</div>
+          </div>
+        </div>
+
+        <div class="step-item">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <h4>Cài đặt package và chạy Server giả lập</h4>
+            <p>Chạy các dòng lệnh sau để khởi tạo ứng dụng:</p>
+            <p style="margin-bottom: 4px; font-size: 0.9rem; color: var(--text-muted);">A. Cài đặt các thư viện phụ thuộc (Chỉ cần chạy ở lần đầu tiên):</p>
+            <div class="code-block">npm install</div>
+            <p style="margin-bottom: 4px; font-size: 0.9rem; color: var(--text-muted);">B. Khởi động server giả lập thời gian thực:</p>
+            <div class="code-block">npm run dev</div>
+            <p>Sau đó, trình duyệt sẽ tự động mở hoặc anh mở trình duyệt web bất kỳ và truy cập địa chỉ: <span class="highlight" style="color: #818cf8; text-decoration: underline;">http://localhost:5173</span></p>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <div class="alert alert-warning">
       <p>⚠️ <strong>Cảnh báo học thuật:</strong> Trình mô phỏng này áp dụng các mô hình động học và thủy lực tĩnh đơn giản hóa phục vụ mục đích giảng dạy lý thuyết đại học. Các thông số không được dùng cho việc thiết kế chế tạo hoặc vận hành các loại máy xúc thực tế ngoài công trường.</p>
     </div>
