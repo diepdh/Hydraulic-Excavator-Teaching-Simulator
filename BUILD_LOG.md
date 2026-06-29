@@ -19,6 +19,7 @@ Mỗi JOB phải có một mục riêng, giữ nguyên lịch sử thay vì ghi 
 - JOB-001: DONE.
 - JOB-002: DONE.
 - JOB-003: DONE.
+- JOB-004: DONE.
 
 ---
 
@@ -153,6 +154,33 @@ Mỗi JOB phải có một mục riêng, giữ nguyên lịch sử thay vì ghi 
 - Ghi chú cho Reviewer:
   - Domain types hoàn toàn tách biệt, không import React/UI.
   - Bổ sung file validation cấu hình [configValidator.ts](file:///C:/Users/dohuy/Downloads/01.%20Documents/May_thuy_luc/src/config/configValidator.ts) và unit test tương ứng trong [config.test.ts](file:///C:/Users/dohuy/Downloads/01.%20Documents/May_thuy_luc/tests/unit/config.test.ts) đáp ứng tiêu chí recommended.
+
+## JOB-004 Log
+
+- Trạng thái: DONE
+- Thời gian bắt đầu: 2026-06-29T08:26:40+07:00
+- Thời gian kết thúc: 2026-06-29T08:30:00+07:00
+- Phiên bản code: commit `c59df25`
+- File đã tạo/sửa:
+  - [src/simulation/kinematics/angleUtils.ts](file:///C:/Users/dohuy/Downloads/01.%20Documents/May_thuy_luc/src/simulation/kinematics/angleUtils.ts) (Tạo mới)
+  - [src/simulation/kinematics/forwardKinematics.ts](file:///C:/Users/dohuy/Downloads/01.%20Documents/May_thuy_luc/src/simulation/kinematics/forwardKinematics.ts) (Tạo mới)
+  - [src/simulation/kinematics/constraints.ts](file:///C:/Users/dohuy/Downloads/01.%20Documents/May_thuy_luc/src/simulation/kinematics/constraints.ts) (Tạo mới)
+  - [tests/unit/kinematics/kinematics.test.ts](file:///C:/Users/dohuy/Downloads/01.%20Documents/May_thuy_luc/tests/unit/kinematics/kinematics.test.ts) (Tạo mới)
+- Lệnh đã chạy:
+  - `npm run typecheck`
+  - `npm run test`
+  - `npm run build`
+- Kết quả kiểm tra:
+  - `npm run typecheck` pass.
+  - `npm run test` pass (15/15 test cases pass, bao gồm 8 test kinematics mới).
+  - `npm run build` pass.
+- Vấn đề gặp phải:
+  - Không có.
+- Ghi chú cho Reviewer:
+  - Toàn bộ code mô phỏng nằm độc lập trong `src/simulation/kinematics/` và không import React/UI đúng theo dependency direction của BLUEPRINT.md.
+  - Hàm `forwardKinematics` là pure function, tính toán vị trí khớp (X, Y SVG pixel) và Reach/Height (mét) vật lý chính xác theo hệ tọa độ đã thống nhất.
+  - Cung cấp đầy đủ test known pose (All links horizontal) và clamp boundary warnings.
+
 
 
 
