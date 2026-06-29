@@ -7,12 +7,14 @@ import { DebugOverlay } from './DebugOverlay';
 import styles from './SimulationScene.module.css';
 
 export const SimulationScene: React.FC = () => {
-  const [showDebug, setShowDebug] = useState(false); // Default to false for better aesthetics, can toggle
+  const [showDebug, setShowDebug] = useState(false);
   const state = useSimulationStore();
   const { positions, reach, height } = selectKinematics(state);
   
-  // Kiểm tra xem cát có đang rơi trong quá trình DUMP hay không
   const isDumping = state.cycleStatus === 'DUMP';
+  
+  // Tính toán khoảng dịch chuyển Y tương đối dựa trên sự thay đổi của baseY trong config
+  const offsetDynamicY = geometryConfig.baseY - 380;
   
   return (
     <div className={styles.sceneContainer}>
@@ -34,7 +36,7 @@ export const SimulationScene: React.FC = () => {
         </span>
       </div>
       <div className={styles.canvasWrapper}>
-        <svg className={styles.svgCanvas} viewBox="0 0 950 550">
+        <svg className={styles.svgCanvas} viewBox="0 0 950 650">
           <defs>
             {/* Grid Pattern */}
             <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
@@ -95,82 +97,70 @@ export const SimulationScene: React.FC = () => {
           {/* Grid background */}
           <rect width="100%" height="100%" fill="url(#grid)" />
 
-          {/* Đống đất (Soil pile) phía dưới gầu xúc */}
-          <g>
-            <path d="M 380 430 Q 470 280 580 430 Z" fill="url(#soilGradient)" stroke="#291305" strokeWidth="2" />
-            <path d="M 410 430 Q 470 320 540 430 Z" fill="rgba(251, 146, 60, 0.1)" />
-            <text x="445" y="415" fill="#a1a1aa" fontSize="11" fontWeight="bold" opacity="0.6">ĐỐNG ĐẤT</text>
-          </g>
-
-          {/* Phễu chứa đất (Dump Hopper) bên phải */}
-          <g>
-            {/* 2 Chân phễu bằng dầm thép */}
-            <line x1="770" y1="350" x2="770" y2="450" stroke="#3f3f46" strokeWidth="6" strokeLinecap="round" />
-            <line x1="830" y1="350" x2="830" y2="450" stroke="#3f3f46" strokeWidth="6" strokeLinecap="round" />
-            <line x1="750" y1="410" x2="850" y2="410" stroke="#27272a" strokeWidth="4" />
-            
-            {/* Miệng phễu */}
-            <path d="M 720 230 L 765 350 L 835 350 L 880 230 Z" fill="url(#hopperGradient)" stroke="#1c1917" strokeWidth="2.5" />
-            {/* Lớp lót và nhãn hiệu */}
-            <path d="M 730 230 L 767 330 L 833 330 L 870 230 Z" fill="rgba(0, 0, 0, 0.2)" />
-            <text x="762" y="295" fill="#e4e4e7" fontSize="11" fontWeight="bold" letterSpacing="1">DUMP HOPPER</text>
-          </g>
-
-          {/* Cát rơi từ gầu xuống phễu khi đang DUMP */}
-          {isDumping && (
-            <g opacity="0.85">
-              {/* Vẽ cát dạng dòng chảy từ gầu (tọa độ gầu đổ khoảng x=760 đến 810, y=200 đến 250) */}
-              <path d="M 770 200 L 765 240 L 780 240 L 775 200 Z" fill="#78350f" />
-              <path d="M 785 205 L 780 250 L 795 250 L 790 205 Z" fill="#b45309" />
-              
-              {/* Các hạt cát rơi tự do */}
-              <circle cx="762" cy="220" r="3.5" fill="#78350f" />
-              <circle cx="778" cy="235" r="2.5" fill="#b45309" />
-              <circle cx="792" cy="225" r="3.0" fill="#78350f" />
-              <circle cx="770" cy="255" r="2.0" fill="#fb923c" />
-              <circle cx="786" cy="260" r="2.5" fill="#b45309" />
-            </g>
-          )}
-
-          {/* Ground Line (Đường chân đất mặt bằng công trường) */}
+          {/* Đường chân đất (Ground Line) */}
           <line x1="0" y1={geometryConfig.baseY} x2="950" y2={geometryConfig.baseY} className={styles.groundLine} />
-          <rect x="0" y={geometryConfig.baseY} width="950" height="170" fill="#1c1917" opacity="0.8" />
-          
-          {/* Cụm Bánh Xích (Crawler Tracks) - Nằm vững chãi dưới mặt đất */}
-          <g>
-            {/* Khung xích chính */}
-            <rect x="90" y={geometryConfig.baseY - 10} width="200" height="42" rx="21" fill="#18181b" stroke="#3f3f46" strokeWidth="4" />
-            
-            {/* Các bánh lăn đỡ xích bên trong */}
-            <circle cx="115" cy={geometryConfig.baseY + 11} r="14" fill="#27272a" stroke="#52525b" strokeWidth="2" />
-            <circle cx="150" cy={geometryConfig.baseY + 11} r="11" fill="#3f3f46" />
-            <circle cx="190" cy={geometryConfig.baseY + 11} r="11" fill="#3f3f46" />
-            <circle cx="230" cy={geometryConfig.baseY + 11} r="11" fill="#3f3f46" />
-            <circle cx="265" cy={geometryConfig.baseY + 11} r="14" fill="#27272a" stroke="#52525b" strokeWidth="2" />
-            
-            {/* Trục chính kết nối xích và cabin xoay */}
-            <rect x="160" y={geometryConfig.baseY - 32} width="60" height="24" fill="#27272a" stroke="#18181b" strokeWidth="2" />
-          </g>
+          {/* Lòng đất sâu phía dưới - Đảm bảo đủ sâu 330px để nhìn thấy gầu đào */}
+          <rect x="0" y={geometryConfig.baseY} width="950" height="330" fill="#1c1917" opacity="0.85" />
 
-          {/* Thân Cabin xoay máy xúc (Upper Structure & Operator Cab) */}
-          <g>
-            {/* Đuôi máy đối trọng xả khói */}
-            <path d="M 75 352 L 155 352 L 160 320 L 85 315 Z" fill="#27272a" stroke="#18181b" strokeWidth="1.5" />
-            <line x1="90" y1="315" x2="90" y2="270" stroke="#71717a" strokeWidth="5" strokeLinecap="round" />
-            {/* Khói nhẹ */}
-            <circle cx="90" cy="255" r="6" fill="#71717a" opacity="0.3" />
-            <circle cx="95" cy="245" r="9" fill="#a1a1aa" opacity="0.15" />
-            
-            {/* Khung máy chính màu vàng */}
-            <path d="M 120 355 L 245 355 L 235 305 L 140 305 Z" fill="url(#boomGradient)" stroke="#78350f" strokeWidth="2" />
-            
-            {/* Buồng lái Cabin kính trong suốt có ghế ngồi tượng trưng */}
-            <path d="M 180 348 L 240 348 L 232 295 L 190 295 Z" fill="rgba(14, 165, 233, 0.15)" stroke="#38bdf8" strokeWidth="2.5" />
-            <line x1="210" y1="295" x2="210" y2="348" stroke="#38bdf8" strokeWidth="1" />
-            <path d="M 195 335 L 205 335 L 205 320 Q 200 315, 195 320 Z" fill="#18181b" /> {/* Ghế lái */}
+          {/* --- NHÓM CÁC HÌNH VẼ ĐƯỢC DỊCH CHUYỂN THEO MẶT ĐẤT ĐỘNG --- */}
+          <g transform={`translate(0, ${offsetDynamicY})`}>
+            {/* Đống đất (Soil pile) nhô lên và ăn sâu dưới mặt đất */}
+            <g>
+              <path d="M 370 380 Q 470 200 580 380 L 580 500 L 370 500 Z" fill="url(#soilGradient)" stroke="#291305" strokeWidth="2" />
+              <path d="M 400 380 Q 470 240 540 380 Z" fill="rgba(251, 146, 60, 0.1)" />
+              <text x="445" y="325" fill="#a1a1aa" fontSize="11" fontWeight="bold" opacity="0.6">ĐỐNG ĐẤT</text>
+            </g>
+
+            {/* Phễu chứa đất (Dump Hopper) bên phải */}
+            <g>
+              {/* 2 Chân phễu bằng dầm thép đặt trên mặt đất */}
+              <line x1="770" y1="350" x2="770" y2="380" stroke="#3f3f46" strokeWidth="6" strokeLinecap="round" />
+              <line x1="830" y1="350" x2="830" y2="380" stroke="#3f3f46" strokeWidth="6" strokeLinecap="round" />
+              
+              {/* Thân phễu */}
+              <path d="M 720 230 L 765 350 L 835 350 L 880 230 Z" fill="url(#hopperGradient)" stroke="#1c1917" strokeWidth="2.5" />
+              <path d="M 730 230 L 767 330 L 833 330 L 870 230 Z" fill="rgba(0, 0, 0, 0.2)" />
+              <text x="762" y="295" fill="#e4e4e7" fontSize="11" fontWeight="bold" letterSpacing="1">DUMP HOPPER</text>
+            </g>
+
+            {/* Cát rơi từ gầu xuống phễu khi đang DUMP */}
+            {isDumping && (
+              <g opacity="0.85">
+                <path d="M 770 200 L 765 240 L 780 240 L 775 200 Z" fill="#78350f" />
+                <path d="M 785 205 L 780 250 L 795 250 L 790 205 Z" fill="#b45309" />
+                <circle cx="762" cy="220" r="3.5" fill="#78350f" />
+                <circle cx="778" cy="235" r="2.5" fill="#b45309" />
+                <circle cx="792" cy="225" r="3.0" fill="#78350f" />
+                <circle cx="770" cy="255" r="2.0" fill="#fb923c" />
+                <circle cx="786" cy="260" r="2.5" fill="#b45309" />
+              </g>
+            )}
+
+            {/* Cụm Bánh Xích (Crawler Tracks) */}
+            <g>
+              <rect x="90" y={380 - 10} width="200" height="42" rx="21" fill="#18181b" stroke="#3f3f46" strokeWidth="4" />
+              <circle cx="115" cy={380 + 11} r="14" fill="#27272a" stroke="#52525b" strokeWidth="2" />
+              <circle cx="150" cy={380 + 11} r="11" fill="#3f3f46" />
+              <circle cx="190" cy={380 + 11} r="11" fill="#3f3f46" />
+              <circle cx="230" cy={380 + 11} r="11" fill="#3f3f46" />
+              <circle cx="265" cy={380 + 11} r="14" fill="#27272a" stroke="#52525b" strokeWidth="2" />
+              <rect x="160" y={380 - 32} width="60" height="24" fill="#27272a" stroke="#18181b" strokeWidth="2" />
+            </g>
+
+            {/* Thân Cabin xoay máy xúc (Upper Structure) */}
+            <g>
+              <path d="M 75 352 L 155 352 L 160 320 L 85 315 Z" fill="#27272a" stroke="#18181b" strokeWidth="1.5" />
+              <line x1="90" y1="315" x2="90" y2="270" stroke="#71717a" strokeWidth="5" strokeLinecap="round" />
+              <circle cx="90" cy="255" r="6" fill="#71717a" opacity="0.3" />
+              <circle cx="95" cy="245" r="9" fill="#a1a1aa" opacity="0.15" />
+              <path d="M 120 355 L 245 355 L 235 305 L 140 305 Z" fill="url(#boomGradient)" stroke="#78350f" strokeWidth="2" />
+              <path d="M 180 348 L 240 348 L 232 295 L 190 295 Z" fill="rgba(14, 165, 233, 0.15)" stroke="#38bdf8" strokeWidth="2.5" />
+              <line x1="210" y1="295" x2="210" y2="348" stroke="#38bdf8" strokeWidth="1" />
+              <path d="M 195 335 L 205 335 L 205 320 Q 200 315, 195 320 Z" fill="#18181b" />
+            </g>
           </g>
           
-          {/* Mô hình Cơ học Động học máy xúc vẽ đè lên bệ cabin */}
+          {/* Mô hình máy xúc vẽ đè lên bệ cabin */}
           <ExcavatorModel
             angles={state.angles}
             positions={positions}
@@ -179,7 +169,7 @@ export const SimulationScene: React.FC = () => {
             cycleStatus={state.cycleStatus}
           />
           
-          {/* Khung Xương hình học (Debug Overlay) */}
+          {/* Debug Overlay */}
           {showDebug && (
             <DebugOverlay
               angles={state.angles}
@@ -187,7 +177,7 @@ export const SimulationScene: React.FC = () => {
             />
           )}
           
-          {/* Nhãn hiển thị tọa độ đầu gầu HUD bám theo vị trí răng gầu */}
+          {/* Nhãn hiển thị tọa độ đầu gầu HUD */}
           <g transform={`translate(${positions.bucketTip.x + 18}, ${positions.bucketTip.y - 18})`} className={styles.tipHud}>
             <rect width="90" height="36" rx="4" fill="rgba(20, 20, 25, 0.85)" stroke="#fb923c" strokeWidth="1.5" />
             <text x="8" y="15" fill="#fca5a5" fontSize="10" fontWeight="bold">X: {reach.toFixed(2)}m</text>

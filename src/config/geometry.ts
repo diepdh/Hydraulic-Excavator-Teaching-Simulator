@@ -14,5 +14,5 @@ export const geometryConfig: GeometryConfig = {
   
   scale: 70,         // 70 pixels = 1 meter
   baseX: 200,        // pivot x on SVG (shifted left to fit reach)
-  baseY: 380,        // pivot y on SVG (shifted down to fit height)
+  baseY: 320,        // pivot y on SVG (shifted up to fit underground scoop visibility)
 };
