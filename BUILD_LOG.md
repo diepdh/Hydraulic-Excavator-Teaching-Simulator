@@ -1,7 +1,7 @@
 # BUILD_LOG.md
 # Nhật ký thực thi của The Coder — Hydraulic Excavator Teaching Simulator
-# Status: WAITING_FOR_BUILD_PLAN
-# Last updated: 2026-06-27
+# Status: IN_PROGRESS
+# Last updated: 2026-06-29
 
 ---
 
@@ -18,6 +18,7 @@ Mỗi JOB phải có một mục riêng, giữ nguyên lịch sử thay vì ghi 
 - Đang thực thi các JOB trong BUILD_PLAN.md.
 - JOB-001: DONE.
 - JOB-002: DONE.
+- JOB-003: DONE.
 
 ---
 
@@ -118,6 +119,41 @@ Mỗi JOB phải có một mục riêng, giữ nguyên lịch sử thay vì ghi 
   - Toàn bộ tài liệu được viết bằng tiếng Việt có dấu đúng quy chuẩn của CONTRACT.md.
   - Cấu trúc thư mục được tổ chức ngăn nắp dưới thư mục `docs/` đúng theo đặc tả của BLUEPRINT.md.
   - Không triển khai mã nguồn mới nào trong JOB này.
+
+## JOB-003 Log
+
+- Trạng thái: DONE
+- Thời gian bắt đầu: 2026-06-29T08:06:12+07:00
+- Thời gian kết thúc: 2026-06-29T08:11:00+07:00
+- Phiên bản code: commit `39317f0`
+- File đã tạo/sửa:
+  - [src/types/simulation.types.ts](file:///C:/Users/dohuy/Downloads/01.%20Documents/May_thuy_luc/src/types/simulation.types.ts) (Tạo mới)
+  - [src/types/kinematics.types.ts](file:///C:/Users/dohuy/Downloads/01.%20Documents/May_thuy_luc/src/types/kinematics.types.ts) (Tạo mới)
+  - [src/types/hydraulics.types.ts](file:///C:/Users/dohuy/Downloads/01.%20Documents/May_thuy_luc/src/types/hydraulics.types.ts) (Tạo mới)
+  - [src/types/cycle.types.ts](file:///C:/Users/dohuy/Downloads/01.%20Documents/May_thuy_luc/src/types/cycle.types.ts) (Tạo mới)
+  - [src/types/teaching.types.ts](file:///C:/Users/dohuy/Downloads/01.%20Documents/May_thuy_luc/src/types/teaching.types.ts) (Tạo mới)
+  - [src/config/geometry.ts](file:///C:/Users/dohuy/Downloads/01.%20Documents/May_thuy_luc/src/config/geometry.ts) (Tạo mới)
+  - [src/config/hydraulicParams.ts](file:///C:/Users/dohuy/Downloads/01.%20Documents/May_thuy_luc/src/config/hydraulicParams.ts) (Tạo mới)
+  - [src/config/presets.ts](file:///C:/Users/dohuy/Downloads/01.%20Documents/May_thuy_luc/src/config/presets.ts) (Tạo mới)
+  - [src/config/cycleDefinition.ts](file:///C:/Users/dohuy/Downloads/01.%20Documents/May_thuy_luc/src/config/cycleDefinition.ts) (Tạo mới)
+  - [src/config/warningRules.ts](file:///C:/Users/dohuy/Downloads/01.%20Documents/May_thuy_luc/src/config/warningRules.ts) (Tạo mới)
+  - [src/config/unitConversions.ts](file:///C:/Users/dohuy/Downloads/01.%20Documents/May_thuy_luc/src/config/unitConversions.ts) (Tạo mới)
+  - [src/config/configValidator.ts](file:///C:/Users/dohuy/Downloads/01.%20Documents/May_thuy_luc/src/config/configValidator.ts) (Tạo mới)
+  - [tests/unit/config.test.ts](file:///C:/Users/dohuy/Downloads/01.%20Documents/May_thuy_luc/tests/unit/config.test.ts) (Tạo mới)
+- Lệnh đã chạy:
+  - `npm run typecheck`
+  - `npm run test`
+  - `npm run build`
+- Kết quả kiểm tra:
+  - `npm run typecheck` pass không lỗi.
+  - `npm run test` pass (7/7 test cases pass).
+  - `npm run build` pass (build thành công).
+- Vấn đề gặp phải:
+  - Lỗi typecheck lúc đầu do yêu cầu import type của `verbatimModuleSyntax`. Đã sửa bằng cách sử dụng `import type` trên toàn bộ các file config/type liên quan.
+- Ghi chú cho Reviewer:
+  - Domain types hoàn toàn tách biệt, không import React/UI.
+  - Bổ sung file validation cấu hình [configValidator.ts](file:///C:/Users/dohuy/Downloads/01.%20Documents/May_thuy_luc/src/config/configValidator.ts) và unit test tương ứng trong [config.test.ts](file:///C:/Users/dohuy/Downloads/01.%20Documents/May_thuy_luc/tests/unit/config.test.ts) đáp ứng tiêu chí recommended.
+
 
 
 
