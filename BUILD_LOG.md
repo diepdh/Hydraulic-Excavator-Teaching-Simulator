@@ -23,6 +23,7 @@ Mỗi JOB phải có một mục riêng, giữ nguyên lịch sử thay vì ghi 
 - JOB-005: DONE.
 - JOB-006: DONE.
 - JOB-007: DONE.
+- JOB-008: DONE.
 
 ---
 
@@ -278,4 +279,37 @@ Mỗi JOB phải có một mục riêng, giữ nguyên lịch sử thay vì ghi 
   - Hiện thực hóa lớp clock `SimClock` trong `animationController.ts` để lưu trữ chính xác lượng thời gian trôi qua, giải quyết hoàn toàn bài toán pause/resume/reset chu trình mà không bị nhảy vọt chuyển động.
   - Các thanh progress bar được thiết kế tối giản, trực quan hóa tiến độ chu trình tổng thể và tiến độ bước hiện thời trên Control Panel.
   - Độc lập hóa các actions điều khiển chu trình thông qua custom hook `useAutomaticCycle.ts`.
+
+## JOB-008 Log
+
+- Trạng thái: DONE
+- Thời gian bắt đầu: 2026-06-29T09:27:24+07:00
+- Thời gian kết thúc: 2026-06-29T09:33:00+07:00
+- Phiên bản code: commit `2b270da`
+- File đã tạo/sửa:
+  - [src/simulation/hydraulics/pressureModel.ts](file:///C:/Users/dohuy/Downloads/01.%20Documents/May_thuy_luc/src/simulation/hydraulics/pressureModel.ts) (Tạo mới)
+  - [src/simulation/hydraulics/flowModel.ts](file:///C:/Users/dohuy/Downloads/01.%20Documents/May_thuy_luc/src/simulation/hydraulics/flowModel.ts) (Tạo mới)
+  - [src/simulation/hydraulics/powerModel.ts](file:///C:/Users/dohuy/Downloads/01.%20Documents/May_thuy_luc/src/simulation/hydraulics/powerModel.ts) (Tạo mới)
+  - [src/simulation/units/unitSystem.ts](file:///C:/Users/dohuy/Downloads/01.%20Documents/May_thuy_luc/src/simulation/units/unitSystem.ts) (Tạo mới)
+  - [tests/unit/hydraulics/hydraulics.test.ts](file:///C:/Users/dohuy/Downloads/01.%20Documents/May_thuy_luc/tests/unit/hydraulics/hydraulics.test.ts) (Tạo mới)
+  - [src/store/store.selectors.ts](file:///C:/Users/dohuy/Downloads/01.%20Documents/May_thuy_luc/src/store/store.selectors.ts) (Sửa đổi)
+  - [src/store/simulationStore.ts](file:///C:/Users/dohuy/Downloads/01.%20Documents/May_thuy_luc/src/store/simulationStore.ts) (Sửa đổi)
+  - [src/components/TelemetryPanel/TelemetryPanel.tsx](file:///C:/Users/dohuy/Downloads/01.%20Documents/May_thuy_luc/src/components/TelemetryPanel/TelemetryPanel.tsx) (Sửa đổi)
+  - [src/components/TelemetryPanel/TelemetryPanel.module.css](file:///C:/Users/dohuy/Downloads/01.%20Documents/May_thuy_luc/src/components/TelemetryPanel/TelemetryPanel.module.css) (Sửa đổi)
+- Lệnh đã chạy:
+  - `npm run typecheck`
+  - `npm run test`
+  - `npm run build`
+- Kết quả kiểm tra:
+  - `npm run typecheck` pass.
+  - `npm run test` pass (28/28 test cases pass, bao gồm 10 test hydraulics mới).
+  - `npm run build` pass.
+- Vấn đề gặp phải:
+  - Lỗi typecheck lúc đầu do gọi sai tên thuộc tính trong `hydraulicParams` cấu hình. Đã sửa sang đúng tên biến config.
+  - Test case `RELIEF_ACTIVE` lúc đầu bị failed do đặt góc Boom chưa đủ thấp (-10 độ) để đạt cánh tay đòn cực đại nhằm kích hoạt áp suất tối đa van an toàn. Đã sửa đổi chính xác.
+- Ghi chú cho Reviewer:
+  - Hiện thực hóa đầy đủ các chuyển đổi đơn vị đo lường thủy lực (Pascal, bar, psi, m3/s, L/min, kW, HP).
+  - Áp dụng các cảnh báo động lực học tự động (RELIEF_ACTIVE khi áp suất chạm đỉnh 250 bar, OVERLOAD khi payload quá tải).
+  - Hiển thị model disclosure cảnh báo giáo dục rõ ràng ở chân TelemetryPanel theo đúng ràng buộc.
+
 
