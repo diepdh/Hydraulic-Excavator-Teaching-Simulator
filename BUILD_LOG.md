@@ -349,8 +349,8 @@ Mỗi JOB phải có một mục riêng, giữ nguyên lịch sử thay vì ghi 
 
 - Trạng thái: DONE
 - Thời gian bắt đầu: 2026-06-29T15:41:30+07:00
-- Thời gian kết thúc: 2026-06-29T17:02:00+07:00
-- Phiên bản code: commit `4733741`
+- Thời gian kết thúc: 2026-06-29T17:10:00+07:00
+- Phiên bản code: commit `14245f6`
 - File đã sửa:
   - [src/config/geometry.ts](file:///C:/Users/dohuy/Downloads/01.%20Documents/May_thuy_luc/src/config/geometry.ts) (Sửa đổi)
   - [src/components/SimulationScene/SimulationScene.tsx](file:///C:/Users/dohuy/Downloads/01.%20Documents/May_thuy_luc/src/components/SimulationScene/SimulationScene.tsx) (Sửa đổi)
@@ -369,7 +369,11 @@ Mỗi JOB phải có một mục riêng, giữ nguyên lịch sử thay vì ghi 
   - `npm run build` pass.
 - Chi tiết cải tiến:
   - **Sửa lỗi ngược hướng khớp**: Sửa đổi công thức động học thuận từ cộng góc sang trừ góc đối với Arm và Bucket (`phiArm = radBoom - radArm`, `phiBucket = phiArm - radBucket`), đồng thời đảo chiều xoay tương ứng trong SVG rotate (`rotate(${angles.arm})`, `rotate(${angles.bucket})`). Đảm bảo Arm và Bucket gập vào phía bụng (co gập tự nhiên hướng vào cabin giống ngón tay cuộn vào trong lòng bàn tay) thay vì bẻ ngược lên lưng như trước.
-  - **Khắc phục lỗi lệch khung hình**: Thay đổi scale từ 80 xuống 70, dịch gốc máy baseX từ 250 về 200, baseY từ 350 về 380, và nới rộng viewBox của SVG thành 950x550. Đảm bảo toàn bộ chuyển động vươn tối đa hoặc nâng cao không bị cắt viền.
+  - **Khắc phục lỗi lệch/khuất khung hình**:
+    - Thay đổi scale từ 80 xuống 70, dịch gốc máy baseX từ 250 về 200, và nâng baseY từ 380 lên 320 (để nâng cao máy xúc và dành khoảng không gian sâu 330px dưới lòng đất).
+    - Nới rộng viewBox của SVG từ 950x550 thành 950x650.
+    - Áp dụng translate Y động `translate(0, ${geometryConfig.baseY - 380})` bọc quanh các cấu kiện tĩnh (cabin, bánh xích, đống đất, phễu).
+    - **Kết quả**: Khi gầu xúc cắm xuống sâu nhất dưới lòng đất để múc cát, toàn bộ cơ cấu đòn gầu và đầu răng gầu luôn hiển thị rõ ràng bên trong khung hình, không bị che khuất hay tràn mép dưới.
   - **Cài đặt 3 cụm Xy lanh Thủy lực động**: Tính toán lượng giác điểm neo để vẽ 3 cụm xy lanh tự động co duỗi piston chrome bóng loáng và tự xoay khớp chốt theo chuyển động của cần đòn Boom-Arm-Bucket.
   - **Trực quan hóa kịch bản múc & đổ đất**:
     - Vẽ đống đất (Soil pile) màu nâu sẫm bên dưới gầm gầu xúc.
@@ -377,6 +381,7 @@ Mỗi JOB phải có một mục riêng, giữ nguyên lịch sử thay vì ghi 
     - Thêm mảng cát trong gầu xuất hiện động khi múc lên (`SCOOP`, `LIFT`, `DUMP`).
     - Thêm hiệu ứng hạt cát chảy/rơi tự do từ gầu xuống phễu khi chu trình tự động ở bước `DUMP`.
   - **Cải tiến thẩm mỹ đồ họa**: Vẽ bánh xích thép xám đen, cabin màu vàng-đen có kính buồng lái màu xanh trong suốt, ống xả khói động, răng gầu bọc thép đúc và áp dụng gradients nổi khối cho tất cả cấu kiện.
+
 
 
 
