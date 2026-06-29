@@ -22,6 +22,7 @@ Mỗi JOB phải có một mục riêng, giữ nguyên lịch sử thay vì ghi 
 - JOB-004: DONE.
 - JOB-005: DONE.
 - JOB-006: DONE.
+- JOB-007: DONE.
 
 ---
 
@@ -247,3 +248,34 @@ Mỗi JOB phải có một mục riêng, giữ nguyên lịch sử thay vì ghi 
   - Mô hình SVG máy xúc được dựng chuẩn bằng phân cấp nhóm khớp lồng nhau (rotate transform), loại bỏ hoàn toàn khả năng bị rã khớp cơ học.
   - Hỗ trợ nội suy chuyển động (Cubic Ease-In-Out RAF animation) khi kích hoạt presets.
   - Có Debug Overlay đè trực tiếp lên các khớp để reviewer xác minh tọa độ pixel.
+
+## JOB-007 Log
+
+- Trạng thái: DONE
+- Thời gian bắt đầu: 2026-06-29T09:19:39+07:00
+- Thời gian kết thúc: 2026-06-29T09:25:00+07:00
+- Phiên bản code: commit `901a9a6`
+- File đã tạo/sửa:
+  - [src/simulation/animation/interpolation.ts](file:///C:/Users/dohuy/Downloads/01.%20Documents/May_thuy_luc/src/simulation/animation/interpolation.ts) (Tạo mới)
+  - [src/simulation/animation/animationController.ts](file:///C:/Users/dohuy/Downloads/01.%20Documents/May_thuy_luc/src/simulation/animation/animationController.ts) (Tạo mới)
+  - [src/simulation/cycle/cycleStateMachine.ts](file:///C:/Users/dohuy/Downloads/01.%20Documents/May_thuy_luc/src/simulation/cycle/cycleStateMachine.ts) (Tạo mới)
+  - [src/features/automatic-cycle/useAutomaticCycle.ts](file:///C:/Users/dohuy/Downloads/01.%20Documents/May_thuy_luc/src/features/automatic-cycle/useAutomaticCycle.ts) (Tạo mới)
+  - [tests/unit/cycle/cycle.test.ts](file:///C:/Users/dohuy/Downloads/01.%20Documents/May_thuy_luc/tests/unit/cycle/cycle.test.ts) (Tạo mới)
+  - [src/store/simulationStore.ts](file:///C:/Users/dohuy/Downloads/01.%20Documents/May_thuy_luc/src/store/simulationStore.ts) (Sửa đổi)
+  - [src/components/ControlPanel/ControlPanel.tsx](file:///C:/Users/dohuy/Downloads/01.%20Documents/May_thuy_luc/src/components/ControlPanel/ControlPanel.tsx) (Sửa đổi)
+  - [src/components/ControlPanel/ControlPanel.module.css](file:///C:/Users/dohuy/Downloads/01.%20Documents/May_thuy_luc/src/components/ControlPanel/ControlPanel.module.css) (Sửa đổi)
+- Lệnh đã chạy:
+  - `npm run typecheck`
+  - `npm run test`
+  - `npm run build`
+- Kết quả kiểm tra:
+  - `npm run typecheck` pass.
+  - `npm run test` pass (18/18 test cases pass, bao gồm 3 test cycle mới).
+  - `npm run build` pass.
+- Vấn đề gặp phải:
+  - Gặp lỗi build do gõ nhầm thuộc tính `currentStep.angles` thay vì `currentStep.targetAngles` được khai báo trong định nghĩa cấu hình chu trình. Đã sửa đổi chính xác.
+- Ghi chú cho Reviewer:
+  - Hiện thực hóa lớp clock `SimClock` trong `animationController.ts` để lưu trữ chính xác lượng thời gian trôi qua, giải quyết hoàn toàn bài toán pause/resume/reset chu trình mà không bị nhảy vọt chuyển động.
+  - Các thanh progress bar được thiết kế tối giản, trực quan hóa tiến độ chu trình tổng thể và tiến độ bước hiện thời trên Control Panel.
+  - Độc lập hóa các actions điều khiển chu trình thông qua custom hook `useAutomaticCycle.ts`.
+
