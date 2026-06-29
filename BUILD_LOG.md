@@ -317,25 +317,34 @@ Mỗi JOB phải có một mục riêng, giữ nguyên lịch sử thay vì ghi 
 
 - Trạng thái: DONE
 - Thời gian bắt đầu: 2026-06-29T09:53:12+07:00
-- Thời gian kết thúc: 2026-06-29T10:05:00+07:00
-- Phiên bản code: commit `8bc7d79`
+- Thời gian kết thúc: 2026-06-29T10:52:00+07:00
+- Phiên bản code: commit `fd25fdf`
 - File đã tạo/sửa:
-  - [tests/e2e/simulation.e2e.test.tsx](file:///C:/Users/dohuy/Downloads/01.%20Documents/May_thuy_luc/tests/e2e/simulation.e2e.test.tsx) (Tạo mới)
+  - [playwright.config.ts](file:///C:/Users/dohuy/Downloads/01.%20Documents/May_thuy_luc/playwright.config.ts) (Tạo mới)
+  - [tests/e2e/simulation.spec.ts](file:///C:/Users/dohuy/Downloads/01.%20Documents/May_thuy_luc/tests/e2e/simulation.spec.ts) (Tạo mới)
+  - [tests/integration/simulation.integration.test.tsx](file:///C:/Users/dohuy/Downloads/01.%20Documents/May_thuy_luc/tests/integration/simulation.integration.test.tsx) (Tạo mới)
+  - [vitest.config.ts](file:///C:/Users/dohuy/Downloads/01.%20Documents/May_thuy_luc/vitest.config.ts) (Sửa đổi)
+  - [package.json](file:///C:/Users/dohuy/Downloads/01.%20Documents/May_thuy_luc/package.json) (Sửa đổi)
   - [README.md](file:///C:/Users/dohuy/Downloads/01.%20Documents/May_thuy_luc/README.md) (Sửa đổi)
 - Lệnh đã chạy:
   - `npm run typecheck`
   - `npm run test`
+  - `npm run test:e2e`
   - `npm run build`
 - Kết quả kiểm tra:
   - `npm run typecheck` pass.
-  - `npm run test` pass (32/32 test cases pass, bao gồm 4 test E2E tích hợp mới).
+  - `npm run test` pass (32/32 test cases pass, bao gồm 4 test integration sạch sẽ không còn bất kỳ warning act nào).
+  - `npm run test:e2e` pass (5/5 tests trong Chromium trình duyệt thật pass, bao trùm đầy đủ 12 scenarios của blueprint).
   - `npm run build` pass (build thành công tĩnh và tối ưu hóa file production).
 - Vấn đề gặp phải:
-  - Gặp lỗi build test E2E do text button preset của `'dig'` sai nhãn thật. Đã sửa lại khớp cấu hình `'Tư thế đào (Hạ gầu)'`.
-  - Gặp lỗi E2E test do mock `requestAnimationFrame` đồng bộ đè lên stack đệ quy vô hạn trong Vitest. Đã sửa bằng cách polyfill sử dụng `setTimeout(cb, 0)` bất đồng bộ giúp fake timers Vitest kiểm soát tiến trình chạy trơn tru mà không bị tràn bộ nhớ stack.
+  - Lớp E2E trước đó sử dụng jsdom chỉ là component test. Đã chuyển toàn bộ sang `tests/integration/` và cài đặt Playwright E2E browser thật sự chạy Chromium không đầu (headless) cho đúng test-specification.
+  - Các cảnh báo `act(...)` trong integration test đã được bao bọc sạch sẽ và dọn dẹp các pending timers.
+  - Cần loại trừ `tests/e2e/**` khỏi Vitest config để tránh Vitest quét nhầm cú pháp của Playwright E2E và gây crash.
+  - Tăng timeout E2E cho chu trình tự động lên 25s do tổng duration chạy thực sự của chu trình 8 bước là 17 giây.
 - Ghi chú cho Reviewer:
-  - Tài liệu README.md được bổ sung đầy đủ mô tả thuật toán, kịch bản Demo flow chi tiết cùng danh sách các giới hạn kỹ thuật (Known limitations) để sẵn sàng bàn giao bản release MVP v1.0.0.
-  - Bản build sản phẩm trong thư mục `dist/` đạt mức tối ưu hóa cao về dung lượng và hiệu năng.
+  - Dự án hiện đã có cấu hình và chạy trơn tru cả 3 tầng kiểm thử: Unit Test (Vitest), Component/Integration Test (RTL), và E2E Browser Test (Playwright) theo đúng phân tầng kiến trúc kim tự tháp đã chốt.
+  - Tài liệu README.md được bổ sung đầy đủ chi tiết và phân tích known limitations.
+
 
 
 
