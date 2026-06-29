@@ -35,17 +35,20 @@ describe('Forward Kinematics Test', () => {
     expect(result.positions.boomBase.x).toBe(geometryConfig.baseX);
     expect(result.positions.boomBase.y).toBe(geometryConfig.baseY);
 
-    // Boom End: x = baseX + L_boom * scale = 250 + 4.0 * 80 = 570
-    expect(result.positions.boomEnd.x).toBeCloseTo(570);
-    expect(result.positions.boomEnd.y).toBeCloseTo(350);
+    // Boom End: x = baseX + L_boom * scale
+    const expectedBoomEndX0 = geometryConfig.baseX + geometryConfig.L_boom * geometryConfig.scale;
+    expect(result.positions.boomEnd.x).toBeCloseTo(expectedBoomEndX0);
+    expect(result.positions.boomEnd.y).toBeCloseTo(geometryConfig.baseY);
 
-    // Arm End: x = 570 + L_arm * scale = 570 + 2.8 * 80 = 794
-    expect(result.positions.armEnd.x).toBeCloseTo(794);
-    expect(result.positions.armEnd.y).toBeCloseTo(350);
+    // Arm End: x = expectedBoomEndX0 + L_arm * scale
+    const expectedArmEndX0 = expectedBoomEndX0 + geometryConfig.L_arm * geometryConfig.scale;
+    expect(result.positions.armEnd.x).toBeCloseTo(expectedArmEndX0);
+    expect(result.positions.armEnd.y).toBeCloseTo(geometryConfig.baseY);
 
-    // Bucket Tip: x = 794 + L_bucket * scale = 794 + 1.5 * 80 = 914
-    expect(result.positions.bucketTip.x).toBeCloseTo(914);
-    expect(result.positions.bucketTip.y).toBeCloseTo(350);
+    // Bucket Tip: x = expectedArmEndX0 + L_bucket * scale
+    const expectedBucketTipX0 = expectedArmEndX0 + geometryConfig.L_bucket * geometryConfig.scale;
+    expect(result.positions.bucketTip.x).toBeCloseTo(expectedBucketTipX0);
+    expect(result.positions.bucketTip.y).toBeCloseTo(geometryConfig.baseY);
 
     // Telemetry Reach = 4.0 + 2.8 + 1.5 = 8.3m
     expect(result.reach).toBeCloseTo(8.3);
@@ -58,8 +61,8 @@ describe('Forward Kinematics Test', () => {
     const result = forwardKinematics(poseAngles, geometryConfig);
 
     const rad = (30 * Math.PI) / 180;
-    const expectedBoomEndX = 250 + 4.0 * 80 * Math.cos(rad);
-    const expectedBoomEndY = 350 - 4.0 * 80 * Math.sin(rad);
+    const expectedBoomEndX = geometryConfig.baseX + geometryConfig.L_boom * geometryConfig.scale * Math.cos(rad);
+    const expectedBoomEndY = geometryConfig.baseY - geometryConfig.L_boom * geometryConfig.scale * Math.sin(rad);
 
     expect(result.positions.boomEnd.x).toBeCloseTo(expectedBoomEndX);
     expect(result.positions.boomEnd.y).toBeCloseTo(expectedBoomEndY);

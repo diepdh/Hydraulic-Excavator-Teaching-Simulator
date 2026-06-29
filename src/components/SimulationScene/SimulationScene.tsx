@@ -7,9 +7,12 @@ import { DebugOverlay } from './DebugOverlay';
 import styles from './SimulationScene.module.css';
 
 export const SimulationScene: React.FC = () => {
-  const [showDebug, setShowDebug] = useState(true); // Default to true so reviewer can immediately verify
+  const [showDebug, setShowDebug] = useState(false); // Default to false for better aesthetics, can toggle
   const state = useSimulationStore();
   const { positions, reach, height } = selectKinematics(state);
+  
+  // Kiểm tra xem cát có đang rơi trong quá trình DUMP hay không
+  const isDumping = state.cycleStatus === 'DUMP';
   
   return (
     <div className={styles.sceneContainer}>
@@ -31,65 +34,152 @@ export const SimulationScene: React.FC = () => {
         </span>
       </div>
       <div className={styles.canvasWrapper}>
-        <svg className={styles.svgCanvas} viewBox="0 0 800 500">
+        <svg className={styles.svgCanvas} viewBox="0 0 950 550">
           <defs>
             {/* Grid Pattern */}
             <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
-              <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(255, 255, 255, 0.05)" strokeWidth="1" />
+              <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(255, 255, 255, 0.04)" strokeWidth="1" />
             </pattern>
             
-            {/* Indigo gradient for Boom */}
-            <linearGradient id="boomGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="#4f46e5" />
-              <stop offset="100%" stopColor="#818cf8" />
+            {/* Gradient cho Cần Boom (Vàng công nghiệp) */}
+            <linearGradient id="boomGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#f59e0b" />
+              <stop offset="50%" stopColor="#d97706" />
+              <stop offset="100%" stopColor="#b45309" />
             </linearGradient>
             
-            {/* Amber gradient for Arm */}
-            <linearGradient id="armGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+            {/* Gradient cho Tay gầu Arm */}
+            <linearGradient id="armGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#fbbf24" />
+              <stop offset="60%" stopColor="#d97706" />
+              <stop offset="100%" stopColor="#92400e" />
+            </linearGradient>
+            
+            {/* Gradient cho Gầu xúc */}
+            <linearGradient id="bucketGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#71717a" />
+              <stop offset="50%" stopColor="#52525b" />
+              <stop offset="100%" stopColor="#27272a" />
+            </linearGradient>
+
+            {/* Gradient cho Vỏ Xy lanh Thủy lực (Thép đậm) */}
+            <linearGradient id="cylinderGradient" x1="0%" y1="0%" x2="0%" y2="100%">
               <stop offset="0%" stopColor="#d97706" />
-              <stop offset="100%" stopColor="#fbbf24" />
+              <stop offset="40%" stopColor="#b45309" />
+              <stop offset="100%" stopColor="#78350f" />
+            </linearGradient>
+
+            {/* Gradient cho Piston Chrome bóng */}
+            <linearGradient id="pistonGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stopColor="#ffffff" />
+              <stop offset="30%" stopColor="#e4e4e7" />
+              <stop offset="70%" stopColor="#a1a1aa" />
+              <stop offset="100%" stopColor="#52525b" />
+            </linearGradient>
+
+            {/* Gradient cho Phễu đựng cát */}
+            <linearGradient id="hopperGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor="#3f3f46" />
+              <stop offset="50%" stopColor="#27272a" />
+              <stop offset="100%" stopColor="#18181b" />
             </linearGradient>
             
-            {/* Pink gradient for Bucket */}
-            <linearGradient id="bucketGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="#db2777" />
-              <stop offset="100%" stopColor="#f472b6" />
-            </linearGradient>
+            {/* Gradient cho Đống đất */}
+            <radialGradient id="soilGradient" cx="50%" cy="40%" r="50%">
+              <stop offset="0%" stopColor="#7c2d12" />
+              <stop offset="70%" stopColor="#451a03" />
+              <stop offset="100%" stopColor="#1c1917" />
+            </radialGradient>
           </defs>
           
           {/* Grid background */}
           <rect width="100%" height="100%" fill="url(#grid)" />
 
-          {/* Ground Line */}
-          <line x1="0" y1={geometryConfig.baseY} x2="800" y2={geometryConfig.baseY} className={styles.groundLine} />
+          {/* Đống đất (Soil pile) phía dưới gầu xúc */}
+          <g>
+            <path d="M 380 430 Q 470 280 580 430 Z" fill="url(#soilGradient)" stroke="#291305" strokeWidth="2" />
+            <path d="M 410 430 Q 470 320 540 430 Z" fill="rgba(251, 146, 60, 0.1)" />
+            <text x="445" y="415" fill="#a1a1aa" fontSize="11" fontWeight="bold" opacity="0.6">ĐỐNG ĐẤT</text>
+          </g>
+
+          {/* Phễu chứa đất (Dump Hopper) bên phải */}
+          <g>
+            {/* 2 Chân phễu bằng dầm thép */}
+            <line x1="770" y1="350" x2="770" y2="450" stroke="#3f3f46" strokeWidth="6" strokeLinecap="round" />
+            <line x1="830" y1="350" x2="830" y2="450" stroke="#3f3f46" strokeWidth="6" strokeLinecap="round" />
+            <line x1="750" y1="410" x2="850" y2="410" stroke="#27272a" strokeWidth="4" />
+            
+            {/* Miệng phễu */}
+            <path d="M 720 230 L 765 350 L 835 350 L 880 230 Z" fill="url(#hopperGradient)" stroke="#1c1917" strokeWidth="2.5" />
+            {/* Lớp lót và nhãn hiệu */}
+            <path d="M 730 230 L 767 330 L 833 330 L 870 230 Z" fill="rgba(0, 0, 0, 0.2)" />
+            <text x="762" y="295" fill="#e4e4e7" fontSize="11" fontWeight="bold" letterSpacing="1">DUMP HOPPER</text>
+          </g>
+
+          {/* Cát rơi từ gầu xuống phễu khi đang DUMP */}
+          {isDumping && (
+            <g opacity="0.85">
+              {/* Vẽ cát dạng dòng chảy từ gầu (tọa độ gầu đổ khoảng x=760 đến 810, y=200 đến 250) */}
+              <path d="M 770 200 L 765 240 L 780 240 L 775 200 Z" fill="#78350f" />
+              <path d="M 785 205 L 780 250 L 795 250 L 790 205 Z" fill="#b45309" />
+              
+              {/* Các hạt cát rơi tự do */}
+              <circle cx="762" cy="220" r="3.5" fill="#78350f" />
+              <circle cx="778" cy="235" r="2.5" fill="#b45309" />
+              <circle cx="792" cy="225" r="3.0" fill="#78350f" />
+              <circle cx="770" cy="255" r="2.0" fill="#fb923c" />
+              <circle cx="786" cy="260" r="2.5" fill="#b45309" />
+            </g>
+          )}
+
+          {/* Ground Line (Đường chân đất mặt bằng công trường) */}
+          <line x1="0" y1={geometryConfig.baseY} x2="950" y2={geometryConfig.baseY} className={styles.groundLine} />
+          <rect x="0" y={geometryConfig.baseY} width="950" height="170" fill="#1c1917" opacity="0.8" />
           
-          {/* Base Cabin Structure */}
-          <rect
-            x={geometryConfig.baseX - 45}
-            y={geometryConfig.baseY - 45}
-            width="90"
-            height="45"
-            rx="8"
-            className={styles.cabinBase}
-          />
-          <rect
-            x={geometryConfig.baseX - 30}
-            y={geometryConfig.baseY - 80}
-            width="50"
-            height="40"
-            rx="5"
-            className={styles.cabinTop}
-          />
+          {/* Cụm Bánh Xích (Crawler Tracks) - Nằm vững chãi dưới mặt đất */}
+          <g>
+            {/* Khung xích chính */}
+            <rect x="90" y={geometryConfig.baseY - 10} width="200" height="42" rx="21" fill="#18181b" stroke="#3f3f46" strokeWidth="4" />
+            
+            {/* Các bánh lăn đỡ xích bên trong */}
+            <circle cx="115" cy={geometryConfig.baseY + 11} r="14" fill="#27272a" stroke="#52525b" strokeWidth="2" />
+            <circle cx="150" cy={geometryConfig.baseY + 11} r="11" fill="#3f3f46" />
+            <circle cx="190" cy={geometryConfig.baseY + 11} r="11" fill="#3f3f46" />
+            <circle cx="230" cy={geometryConfig.baseY + 11} r="11" fill="#3f3f46" />
+            <circle cx="265" cy={geometryConfig.baseY + 11} r="14" fill="#27272a" stroke="#52525b" strokeWidth="2" />
+            
+            {/* Trục chính kết nối xích và cabin xoay */}
+            <rect x="160" y={geometryConfig.baseY - 32} width="60" height="24" fill="#27272a" stroke="#18181b" strokeWidth="2" />
+          </g>
+
+          {/* Thân Cabin xoay máy xúc (Upper Structure & Operator Cab) */}
+          <g>
+            {/* Đuôi máy đối trọng xả khói */}
+            <path d="M 75 352 L 155 352 L 160 320 L 85 315 Z" fill="#27272a" stroke="#18181b" strokeWidth="1.5" />
+            <line x1="90" y1="315" x2="90" y2="270" stroke="#71717a" strokeWidth="5" strokeLinecap="round" />
+            {/* Khói nhẹ */}
+            <circle cx="90" cy="255" r="6" fill="#71717a" opacity="0.3" />
+            <circle cx="95" cy="245" r="9" fill="#a1a1aa" opacity="0.15" />
+            
+            {/* Khung máy chính màu vàng */}
+            <path d="M 120 355 L 245 355 L 235 305 L 140 305 Z" fill="url(#boomGradient)" stroke="#78350f" strokeWidth="2" />
+            
+            {/* Buồng lái Cabin kính trong suốt có ghế ngồi tượng trưng */}
+            <path d="M 180 348 L 240 348 L 232 295 L 190 295 Z" fill="rgba(14, 165, 233, 0.15)" stroke="#38bdf8" strokeWidth="2.5" />
+            <line x1="210" y1="295" x2="210" y2="348" stroke="#38bdf8" strokeWidth="1" />
+            <path d="M 195 335 L 205 335 L 205 320 Q 200 315, 195 320 Z" fill="#18181b" /> {/* Ghế lái */}
+          </g>
           
-          {/* Main Mechanical Model */}
+          {/* Mô hình Cơ học Động học máy xúc vẽ đè lên bệ cabin */}
           <ExcavatorModel
             angles={state.angles}
             positions={positions}
             config={geometryConfig}
             payload={state.payload}
+            cycleStatus={state.cycleStatus}
           />
           
-          {/* Debug Overlay showing joint coordinates */}
+          {/* Khung Xương hình học (Debug Overlay) */}
           {showDebug && (
             <DebugOverlay
               angles={state.angles}
@@ -97,11 +187,11 @@ export const SimulationScene: React.FC = () => {
             />
           )}
           
-          {/* SVG Overlay HUD (Tọa độ hiện thời trên màn hình) */}
-          <g transform={`translate(${positions.bucketTip.x + 15}, ${positions.bucketTip.y - 15})`} className={styles.tipHud}>
-            <rect width="90" height="35" rx="4" fill="rgba(20, 20, 25, 0.85)" stroke="#22d3ee" strokeWidth="1.5" />
-            <text x="8" y="15" fill="#22d3ee" fontSize="10" fontWeight="bold">X: {reach.toFixed(2)}m</text>
-            <text x="8" y="27" fill="#22d3ee" fontSize="10" fontWeight="bold">Y: {height.toFixed(2)}m</text>
+          {/* Nhãn hiển thị tọa độ đầu gầu HUD bám theo vị trí răng gầu */}
+          <g transform={`translate(${positions.bucketTip.x + 18}, ${positions.bucketTip.y - 18})`} className={styles.tipHud}>
+            <rect width="90" height="36" rx="4" fill="rgba(20, 20, 25, 0.85)" stroke="#fb923c" strokeWidth="1.5" />
+            <text x="8" y="15" fill="#fca5a5" fontSize="10" fontWeight="bold">X: {reach.toFixed(2)}m</text>
+            <text x="8" y="27" fill="#fca5a5" fontSize="10" fontWeight="bold">Y: {height.toFixed(2)}m</text>
           </g>
         </svg>
       </div>

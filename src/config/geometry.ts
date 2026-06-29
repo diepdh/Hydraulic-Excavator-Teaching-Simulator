@@ -12,7 +12,7 @@ export const geometryConfig: GeometryConfig = {
   bucketAngleMin: -30, // degrees
   bucketAngleMax: 90,  // degrees
   
-  scale: 80,         // 80 pixels = 1 meter
-  baseX: 250,        // pivot x on SVG
-  baseY: 350,        // pivot y on SVG
+  scale: 70,         // 70 pixels = 1 meter
+  baseX: 200,        // pivot x on SVG (shifted left to fit reach)
+  baseY: 380,        // pivot y on SVG (shifted down to fit height)
 };
