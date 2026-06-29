@@ -1,6 +1,6 @@
 import React from 'react';
 import { useManualControl } from '../../features/manual-control/useManualControl';
-import { useSimulationStore } from '../../store/simulationStore';
+import { useAutomaticCycle } from '../../features/automatic-cycle/useAutomaticCycle';
 import { presetsConfig } from '../../config/presets';
 import { geometryConfig } from '../../config/geometry';
 import styles from './ControlPanel.module.css';
@@ -11,19 +11,22 @@ export const ControlPanel: React.FC = () => {
     payload,
     throttle,
     mode,
-    simStatus,
     setJointAngle,
     setPayload,
     setThrottle,
     applyPreset,
   } = useManualControl();
   
-  // Read other state from store
-  const cycleStatus = useSimulationStore((state) => state.cycleStatus);
-  const startCycle = useSimulationStore((state) => state.startCycle);
-  const pauseCycle = useSimulationStore((state) => state.pauseCycle);
-  const resumeCycle = useSimulationStore((state) => state.resumeCycle);
-  const resetCycle = useSimulationStore((state) => state.resetCycle);
+  const {
+    cycleStatus,
+    cycleOverallProgress,
+    stepProgress,
+    simStatus,
+    startCycle,
+    pauseCycle,
+    resumeCycle,
+    resetCycle,
+  } = useAutomaticCycle();
   
   return (
     <div className={styles.controlPanel}>
@@ -147,8 +150,39 @@ export const ControlPanel: React.FC = () => {
           </span>
         </div>
         
+        {/* Progress Bars for Automatic Cycle */}
+        {mode === 'AUTOMATIC' && (
+          <div className={styles.progressSection}>
+            <div className={styles.progressGroup}>
+              <div className={styles.labelRow}>
+                <span className={styles.progressLabel}>Tiến độ chu trình</span>
+                <span className={styles.progressVal}>{(cycleOverallProgress * 100).toFixed(0)}%</span>
+              </div>
+              <div className={styles.progressBarBg}>
+                <div
+                  className={styles.progressBarFillOverall}
+                  style={{ width: `${cycleOverallProgress * 100}%` }}
+                />
+              </div>
+            </div>
+
+            <div className={styles.progressGroup}>
+              <div className={styles.labelRow}>
+                <span className={styles.progressLabel}>Tiến độ bước hiện thời</span>
+                <span className={styles.progressVal}>{(stepProgress * 100).toFixed(0)}%</span>
+              </div>
+              <div className={styles.progressBarBg}>
+                <div
+                  className={styles.progressBarFillStep}
+                  style={{ width: `${stepProgress * 100}%` }}
+                />
+              </div>
+            </div>
+          </div>
+        )}
+        
         <div className={styles.btnGrid}>
-          {simStatus === 'IDLE' && (
+          {simStatus === 'IDLE' && cycleStatus !== 'COMPLETE' && (
             <button className={styles.btnStart} onClick={startCycle}>
               Chạy Chu Trình
             </button>
@@ -166,9 +200,11 @@ export const ControlPanel: React.FC = () => {
             </button>
           )}
           
-          <button className={styles.btnReset} onClick={resetCycle}>
-            Đặt Lại
-          </button>
+          {(simStatus === 'COMPLETE' || cycleStatus === 'COMPLETE' || simStatus === 'PAUSED' || mode === 'AUTOMATIC') && (
+            <button className={styles.btnReset} onClick={resetCycle}>
+              Đặt Lại
+            </button>
+          )}
         </div>
       </div>
     </div>
