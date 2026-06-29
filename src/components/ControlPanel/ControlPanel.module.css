@@ -1,0 +1,186 @@
+.controlPanel {
+  background-color: var(--color-bg-panel, #18181b);
+  border: 1px solid var(--color-border, #27272a);
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  color: var(--color-text-primary, #f4f4f5);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.panelTitle {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 700;
+  border-bottom: 1px solid #27272a;
+  padding-bottom: 8px;
+  color: #a5b4fc;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sectionTitle {
+  margin: 0;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-text-secondary, #a1a1aa);
+}
+
+.controlGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.labelRow {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+}
+
+.valIndicator {
+  font-family: monospace;
+  font-weight: bold;
+  color: #c084fc;
+}
+
+.slider {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 6px;
+  border-radius: 3px;
+  background: #27272a;
+  outline: none;
+  transition: background 0.3s;
+}
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #6366f1;
+  cursor: pointer;
+  border: 2px solid #f4f4f5;
+  box-shadow: 0 0 10px rgba(99, 102, 241, 0.5);
+  transition: transform 0.1s;
+}
+
+.slider::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+}
+
+.btnGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+
+.btnPreset, .btnStart, .btnPause, .btnResume, .btnReset {
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all 0.2s ease-in-out;
+}
+
+.btnPreset {
+  background-color: #27272a;
+  color: #f4f4f5;
+  border-color: #3f3f46;
+}
+
+.btnPreset:hover:not(:disabled) {
+  background-color: #3f3f46;
+  border-color: #52525b;
+}
+
+.btnStart {
+  background-color: #10b981;
+  color: white;
+  grid-column: span 1;
+}
+
+.btnStart:hover {
+  background-color: #059669;
+}
+
+.btnPause {
+  background-color: #f59e0b;
+  color: white;
+}
+
+.btnPause:hover {
+  background-color: #d97706;
+}
+
+.btnResume {
+  background-color: #10b981;
+  color: white;
+}
+
+.btnResume:hover {
+  background-color: #059669;
+}
+
+.btnReset {
+  background-color: #ef4444;
+  color: white;
+}
+
+.btnReset:hover {
+  background-color: #dc2626;
+}
+
+button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.cycleStatusWrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #09090b;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  border: 1px solid #27272a;
+}
+
+.statusLabel {
+  color: #a1a1aa;
+}
+
+.statusValue {
+  font-weight: 700;
+  font-family: monospace;
+}
+
+.statusValue[data-status="IDLE"] { color: #a1a1aa; }
+.statusValue[data-status="COMPLETE"] { color: #10b981; }
+.statusValue[data-status="APPROACH"],
+.statusValue[data-status="LOWER"],
+.statusValue[data-status="SCOOP"],
+.statusValue[data-status="LIFT"],
+.statusValue[data-status="DUMP"],
+.statusValue[data-status="RETURN"] {
+  color: #6366f1;
+  animation: pulseText 1.5s infinite alternate;
+}
+
+@keyframes pulseText {
+  from { opacity: 0.7; }
+  to { opacity: 1; }
+}

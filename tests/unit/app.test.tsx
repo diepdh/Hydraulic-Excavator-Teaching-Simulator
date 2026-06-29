@@ -8,8 +8,10 @@ describe('App Smoke Test', () => {
     expect(screen.getByText('Hydraulic Excavator Teaching Simulator')).toBeInTheDocument()
   })
 
-  it('renders simulation scene placeholder', () => {
+  it('renders simulation scene components', () => {
     render(<App />)
-    expect(screen.getByText('[Simulation Scene Placeholder - SVG Canvas]')).toBeInTheDocument()
+    expect(screen.getByText('Không gian mô phỏng 2D Excavator')).toBeInTheDocument()
+    expect(screen.getByText('Bảng điều khiển')).toBeInTheDocument()
+    expect(screen.getByText('Thông số Telemetry')).toBeInTheDocument()
   })
 })

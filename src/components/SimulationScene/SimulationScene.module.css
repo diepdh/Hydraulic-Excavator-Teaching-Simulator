@@ -1,0 +1,127 @@
+.sceneContainer {
+  background-color: var(--color-bg-panel, #18181b);
+  border: 1px solid var(--color-border, #27272a);
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.headerRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.title {
+  margin: 0;
+  font-size: 1.1rem;
+  color: var(--color-text-primary, #f4f4f5);
+  font-weight: 600;
+}
+
+.modeBadge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 9999px;
+  text-transform: uppercase;
+}
+
+.modeBadge[data-mode="MANUAL"] {
+  background-color: rgba(99, 102, 241, 0.15);
+  color: #818cf8;
+  border: 1px solid rgba(99, 102, 241, 0.3);
+}
+
+.modeBadge[data-mode="AUTOMATIC"] {
+  background-color: rgba(16, 185, 129, 0.15);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.canvasWrapper {
+  flex-grow: 1;
+  position: relative;
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: #09090b;
+  border: 1px solid #27272a;
+}
+
+.svgCanvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.groundLine {
+  stroke: #3f3f46;
+  stroke-width: 4;
+  stroke-dasharray: 8 4;
+}
+
+.cabinBase {
+  fill: #27272a;
+  stroke: #52525b;
+  stroke-width: 2;
+}
+
+.cabinTop {
+  fill: #3f3f46;
+  stroke: #52525b;
+  stroke-width: 2;
+}
+
+.boomLink {
+  stroke: #6366f1; /* Indigo color for Boom */
+  stroke-width: 12;
+  stroke-linecap: round;
+}
+
+.armLink {
+  stroke: #f59e0b; /* Amber color for Arm */
+  stroke-width: 9;
+  stroke-linecap: round;
+}
+
+.bucketLink {
+  stroke: #ec4899; /* Pink color for Bucket */
+  stroke-width: 6;
+  stroke-linecap: round;
+}
+
+.pivotPoint {
+  fill: #f4f4f5;
+  stroke: #18181b;
+  stroke-width: 2.5;
+}
+
+.tipPoint {
+  fill: #ef4444;
+  stroke: #f4f4f5;
+  stroke-width: 2;
+  animation: pulse 2s infinite;
+}
+
+.tipHud text {
+  font-family: 'Courier New', Courier, monospace;
+}
+
+@keyframes pulse {
+  0% {
+    r: 8;
+    fill-opacity: 1;
+  }
+  50% {
+    r: 11;
+    fill-opacity: 0.7;
+  }
+  100% {
+    r: 8;
+    fill-opacity: 1;
+  }
+}
