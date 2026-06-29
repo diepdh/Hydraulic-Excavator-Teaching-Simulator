@@ -57,8 +57,8 @@ export const ExcavatorModel: React.FC<ExcavatorModelProps> = ({
   
   // Tính các góc tuyệt đối bằng Radian để xác định điểm neo xy lanh
   const boomRad = (angles.boom * Math.PI) / 180;
-  const armAbsRad = ((angles.boom + angles.arm) * Math.PI) / 180;
-  const bucketAbsRad = ((angles.boom + angles.arm + angles.bucket) * Math.PI) / 180;
+  const armAbsRad = ((angles.boom - angles.arm) * Math.PI) / 180;
+  const bucketAbsRad = ((angles.boom - angles.arm - angles.bucket) * Math.PI) / 180;
   
   // 1. Tọa độ điểm neo cho Boom Cylinder
   const cyl1Base = { x: positions.boomBase.x + 35, y: positions.boomBase.y - 12 };
@@ -131,7 +131,7 @@ export const ExcavatorModel: React.FC<ExcavatorModelProps> = ({
         <circle cx={lBoomPx * 0.65} cy="1" r="6" fill="#09090b" stroke="#78350f" strokeWidth="1" />
         
         {/* 2. Arm Group (Tay gầu): Pivot tại khớp khuỷu Boom End (lBoomPx, 0) */}
-        <g transform={`translate(${lBoomPx}, 0) rotate(${-angles.arm})`}>
+        <g transform={`translate(${lBoomPx}, 0) rotate(${angles.arm})`}>
           {/* Tay đòn Arm dạng hộp thép thẳng thuôn đầu */}
           <path
             d={`M -5 10 
@@ -148,7 +148,7 @@ export const ExcavatorModel: React.FC<ExcavatorModelProps> = ({
           <circle cx={lArmPx * 0.75} cy="-4" r="5" fill="#09090b" stroke="#78350f" strokeWidth="1" />
           
           {/* 3. Bucket Group (Gầu xúc): Pivot tại khớp cổ gầu Arm End (lArmPx, 0) */}
-          <g transform={`translate(${lArmPx}, 0) rotate(${-angles.bucket})`}>
+          <g transform={`translate(${lArmPx}, 0) rotate(${angles.bucket})`}>
             {/* Thân gầu sắt cong khum đựng cát */}
             <path
               d={`M 0 0 

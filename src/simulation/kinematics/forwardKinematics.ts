@@ -26,8 +26,8 @@ export function forwardKinematics(
   
   // Góc tuyệt đối so với trục X vật lý
   const phiBoom = radBoom;
-  const phiArm = radBoom + radArm;
-  const phiBucket = radBoom + radArm + radBucket;
+  const phiArm = radBoom - radArm;
+  const phiBucket = radBoom - radArm - radBucket;
   
   // 1. Boom Base (Gốc quay đặt trên cabin máy xúc)
   const boomBase = { x: baseX, y: baseY };
