@@ -1,6 +1,6 @@
 # BUILD_LOG.md
 # Nhật ký thực thi của The Coder — Hydraulic Excavator Teaching Simulator
-# Status: IN_PROGRESS
+# Status: DONE
 # Last updated: 2026-06-29
 
 ---
@@ -24,6 +24,7 @@ Mỗi JOB phải có một mục riêng, giữ nguyên lịch sử thay vì ghi 
 - JOB-006: DONE.
 - JOB-007: DONE.
 - JOB-008: DONE.
+- JOB-009: DONE.
 
 ---
 
@@ -311,5 +312,30 @@ Mỗi JOB phải có một mục riêng, giữ nguyên lịch sử thay vì ghi 
   - Hiện thực hóa đầy đủ các chuyển đổi đơn vị đo lường thủy lực (Pascal, bar, psi, m3/s, L/min, kW, HP).
   - Áp dụng các cảnh báo động lực học tự động (RELIEF_ACTIVE khi áp suất chạm đỉnh 250 bar, OVERLOAD khi payload quá tải).
   - Hiển thị model disclosure cảnh báo giáo dục rõ ràng ở chân TelemetryPanel theo đúng ràng buộc.
+
+## JOB-009 Log
+
+- Trạng thái: DONE
+- Thời gian bắt đầu: 2026-06-29T09:53:12+07:00
+- Thời gian kết thúc: 2026-06-29T10:05:00+07:00
+- Phiên bản code: commit `8bc7d79`
+- File đã tạo/sửa:
+  - [tests/e2e/simulation.e2e.test.tsx](file:///C:/Users/dohuy/Downloads/01.%20Documents/May_thuy_luc/tests/e2e/simulation.e2e.test.tsx) (Tạo mới)
+  - [README.md](file:///C:/Users/dohuy/Downloads/01.%20Documents/May_thuy_luc/README.md) (Sửa đổi)
+- Lệnh đã chạy:
+  - `npm run typecheck`
+  - `npm run test`
+  - `npm run build`
+- Kết quả kiểm tra:
+  - `npm run typecheck` pass.
+  - `npm run test` pass (32/32 test cases pass, bao gồm 4 test E2E tích hợp mới).
+  - `npm run build` pass (build thành công tĩnh và tối ưu hóa file production).
+- Vấn đề gặp phải:
+  - Gặp lỗi build test E2E do text button preset của `'dig'` sai nhãn thật. Đã sửa lại khớp cấu hình `'Tư thế đào (Hạ gầu)'`.
+  - Gặp lỗi E2E test do mock `requestAnimationFrame` đồng bộ đè lên stack đệ quy vô hạn trong Vitest. Đã sửa bằng cách polyfill sử dụng `setTimeout(cb, 0)` bất đồng bộ giúp fake timers Vitest kiểm soát tiến trình chạy trơn tru mà không bị tràn bộ nhớ stack.
+- Ghi chú cho Reviewer:
+  - Tài liệu README.md được bổ sung đầy đủ mô tả thuật toán, kịch bản Demo flow chi tiết cùng danh sách các giới hạn kỹ thuật (Known limitations) để sẵn sàng bàn giao bản release MVP v1.0.0.
+  - Bản build sản phẩm trong thư mục `dist/` đạt mức tối ưu hóa cao về dung lượng và hiệu năng.
+
 
 
