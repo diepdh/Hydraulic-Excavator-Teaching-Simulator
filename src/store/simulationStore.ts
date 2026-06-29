@@ -8,6 +8,7 @@ import { SimClock } from '../simulation/animation/animationController';
 import { smoothstep } from '../simulation/animation/interpolation';
 import { calculateOverallProgress } from '../simulation/cycle/cycleStateMachine';
 import { cycleConfig } from '../config/cycleDefinition';
+import { hydraulicParams } from '../config/hydraulicParams';
 
 export interface AppState {
   // --- Source State ---
@@ -50,6 +51,40 @@ let activeCycleId: number | null = null;
 const cycleClock = new SimClock();
 let cycleStartAngles: JointAngles = { boom: 0, arm: 0, bucket: 0 };
 
+/**
+ * Hàm kiểm tra và cập nhật các cảnh báo thủy lực động lực học
+ */
+function updateHydraulicWarnings(angles: JointAngles, payload: number, currentWarnings: Set<string>): Set<string> {
+  const nextWarnings = new Set<string>(currentWarnings);
+  
+  // Tính áp suất thô trước khi xả tràn để phát hiện quá tải áp suất
+  const pBase = hydraulicParams.p_base; 
+  const F_gravity = payload * 9.80665;
+  const angleRange = geometryConfig.boomAngleMax - geometryConfig.boomAngleMin;
+  const normalizedAngle = angleRange > 0 ? (angles.boom - geometryConfig.boomAngleMin) / angleRange : 0.5;
+  const leverRatio = 4.5 - normalizedAngle * 2.5;
+  const A_cylinder = 0.005;
+  
+  const pRaw = pBase + (F_gravity * leverRatio) / A_cylinder;
+  const pMax = hydraulicParams.p_relief; 
+  
+  // 1. RELIEF_ACTIVE: Van an toàn mở để xả tràn dầu khi áp suất chạm đỉnh
+  if (pRaw >= pMax) {
+    nextWarnings.add('RELIEF_ACTIVE');
+  } else {
+    nextWarnings.delete('RELIEF_ACTIVE');
+  }
+  
+  // 2. OVERLOAD: Quá tải cơ học/thủy lực nghiêm trọng (áp suất vượt 220 bar hoặc tải quá 1600 kg)
+  if (pRaw >= 22000000 || payload >= 1600) {
+    nextWarnings.add('OVERLOAD');
+  } else {
+    nextWarnings.delete('OVERLOAD');
+  }
+  
+  return nextWarnings;
+}
+
 export const useSimulationStore = create<AppState>((set, get) => ({
   // Baseline initial state
   angles: {
@@ -72,11 +107,14 @@ export const useSimulationStore = create<AppState>((set, get) => ({
     const nextAngles = { ...state.angles, [joint]: value };
     const { clampedAngles, warnings } = clampJointAngles(nextAngles, geometryConfig);
     
-    const nextWarnings = new Set<string>(state.warnings);
+    let nextWarnings = new Set<string>(state.warnings);
     nextWarnings.delete('BOOM_LIMIT');
     nextWarnings.delete('ARM_LIMIT');
     nextWarnings.delete('BUCKET_LIMIT');
     warnings.forEach((w) => nextWarnings.add(w));
+    
+    // Tự động kiểm thử cảnh báo thủy lực
+    nextWarnings = updateHydraulicWarnings(clampedAngles, state.payload, nextWarnings);
     
     return {
       angles: clampedAngles,
@@ -84,7 +122,14 @@ export const useSimulationStore = create<AppState>((set, get) => ({
     };
   }),
   
-  setPayload: (value) => set({ payload: value }),
+  setPayload: (value) => set((state) => {
+    const nextWarnings = updateHydraulicWarnings(state.angles, value, state.warnings);
+    return {
+      payload: value,
+      warnings: nextWarnings,
+    };
+  }),
+  
   setThrottle: (value) => set({ throttle: value }),
   setMode: (value) => set({ mode: value }),
   setSimStatus: (value) => set({ simStatus: value }),
@@ -151,11 +196,10 @@ export const useSimulationStore = create<AppState>((set, get) => ({
   },
   
   startCycle: () => {
-    // 1. Dừng các hoạt động chuyển động cũ
+    // Dừng các hoạt động chuyển động cũ
     get().stopAnimation();
     
     const steps = cycleConfig.steps;
-    // Bắt đầu từ bước 1: APPROACH (bước 0 là IDLE)
     const stepIndex = 1;
     const firstStep = steps[stepIndex];
     cycleStartAngles = { ...get().angles };
@@ -187,12 +231,10 @@ export const useSimulationStore = create<AppState>((set, get) => ({
       
       if (t >= 1.0) {
         t = 1.0;
-        // Khóa vị trí khớp chính xác tại mục tiêu
         get().setJointAngle('boom', currentStep.targetAngles.boom);
         get().setJointAngle('arm', currentStep.targetAngles.arm);
         get().setJointAngle('bucket', currentStep.targetAngles.bucket);
         
-        // Chuyển bước
         const nextIndex = currentStepIndex + 1;
         if (nextIndex < steps.length) {
           const nextStep = steps[nextIndex];
@@ -205,7 +247,6 @@ export const useSimulationStore = create<AppState>((set, get) => ({
           cycleClock.start();
           activeCycleId = requestAnimationFrame(tick);
         } else {
-          // Kết thúc chu trình tự động hoàn toàn
           set({
             cycleStatus: 'COMPLETE',
             simStatus: 'IDLE',

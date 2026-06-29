@@ -66,3 +66,11 @@
   border-top: 1px dashed #27272a;
   padding-top: 8px;
 }
+
+.metricSubValue {
+  font-size: 0.75rem;
+  color: #71717a;
+  font-family: monospace;
+  margin-top: 2px;
+}
+

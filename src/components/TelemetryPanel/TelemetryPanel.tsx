@@ -1,15 +1,10 @@
 import React from 'react';
-import { useSimulationStore } from '../../store/simulationStore';
-import { selectKinematics, selectHydraulics } from '../../store/store.selectors';
-import { unitConversionsConfig } from '../../config/unitConversions';
+import { useTelemetry } from '../../features/telemetry/useTelemetry';
+import { pascalToBar, pascalToPsi, m3sToLmin, wattToKw, wattToHp } from '../../simulation/units/unitSystem';
 import styles from './TelemetryPanel.module.css';
 
 export const TelemetryPanel: React.FC = () => {
-  const state = useSimulationStore();
-  const { reach, height } = selectKinematics(state);
-  const { pressure, flowRate, power } = selectHydraulics(state);
-  
-  const { paToBar, m3sToLmin, wToKw } = unitConversionsConfig;
+  const { reach, height, pressure, flowRate, power } = useTelemetry();
   
   return (
     <div className={styles.telemetryPanel}>
@@ -36,7 +31,10 @@ export const TelemetryPanel: React.FC = () => {
         <div className={styles.metricCard}>
           <span className={styles.metricLabel}>Áp suất thủy lực</span>
           <span className={styles.metricValue}>
-            {paToBar(pressure).toFixed(1)} <span className={styles.unit}>bar</span>
+            {pascalToBar(pressure).toFixed(1)} <span className={styles.unit}>bar</span>
+          </span>
+          <span className={styles.metricSubValue}>
+            {pascalToPsi(pressure).toFixed(0)} psi
           </span>
         </div>
         
@@ -52,13 +50,17 @@ export const TelemetryPanel: React.FC = () => {
         <div className={styles.metricCard}>
           <span className={styles.metricLabel}>Công suất thủy lực</span>
           <span className={styles.metricValue}>
-            {wToKw(power).toFixed(2)} <span className={styles.unit}>kW</span>
+            {wattToKw(power).toFixed(2)} <span className={styles.unit}>kW</span>
+          </span>
+          <span className={styles.metricSubValue}>
+            {wattToHp(power).toFixed(1)} HP
           </span>
         </div>
       </div>
       
-      <div className={styles.disclaimer}>
-        * Lưu ý: Mô hình thủy lực đã được đơn giản hóa quasi-static để phục vụ giảng dạy lý thuyết.
+      {/* Model Disclosure phục vụ mục đích giáo dục giảng dạy */}
+      <div className={styles.disclaimer} id="model-disclosure">
+        ⚠️ <strong>Thông tin mô phỏng:</strong> Mô phỏng đơn giản hóa phục vụ mục đích giảng dạy. Không dùng cho thiết kế kỹ thuật thực tế.
       </div>
     </div>
   );

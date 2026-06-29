@@ -1,7 +1,9 @@
 import type { AppState } from './simulationStore';
 import { forwardKinematics } from '../simulation/kinematics/forwardKinematics';
 import { geometryConfig } from '../config/geometry';
-import { hydraulicParams } from '../config/hydraulicParams';
+import { calculatePressure } from '../simulation/hydraulics/pressureModel';
+import { calculateFlowRate } from '../simulation/hydraulics/flowModel';
+import { calculatePower } from '../simulation/hydraulics/powerModel';
 
 /**
  * Selector tính toán động học thuận (Forward Kinematics) dựa trên góc khớp từ Store
@@ -11,30 +13,24 @@ export const selectKinematics = (state: AppState) => {
 };
 
 /**
- * Selector ước lượng thủy lực tĩnh giả định (Quasi-static Hydraulics proxy)
- * Ngăn chặn việc nhúng trực tiếp công thức vật lý thủy lực vào trong JSX layer
+ * Selector tính toán các thông số thủy lực động lực học thật
+ * Ngăn chặn hoàn toàn việc nhúng trực tiếp công thức vật lý thủy lực vào trong JSX layer
  */
 export const selectHydraulics = (state: AppState) => {
-  const { reach } = selectKinematics(state);
-  const { payload, throttle } = state;
-  const { p_base, p_relief, k_p_payload, mass_empty, efficiency } = hydraulicParams;
+  const { payload, throttle, angles } = state;
   
-  // Áp suất yêu cầu tỷ lệ với tải trọng gầu, khối lượng cơ cấu rỗng, và cánh tay đòn (Reach)
-  // Chia 100 làm hệ số proxy chuẩn hóa
-  const pressureDemand = p_base + (mass_empty + payload) * k_p_payload * reach * 0.01;
+  // Áp suất thực tế (Pa) dựa trên tải trọng tĩnh và góc Boom (động học cần nâng)
+  const pressure = calculatePressure(payload, angles.boom);
   
-  // Cắt biên bởi van an toàn (Relief Valve)
-  const pressure = Math.min(pressureDemand, p_relief);
+  // Lưu lượng dầu cấp bơm (m³/s) dựa trên tay ga động cơ
+  const flowRate = calculateFlowRate(throttle);
   
-  // Lưu lượng dầu tỷ lệ với độ mở tay ga (m3/s)
-  const flowRate = hydraulicParams.q_pump_nominal * throttle;
-  
-  // Công suất thủy lực (Watt) = p * Q / hiệu suất
-  const power = (pressure * flowRate) / efficiency;
+  // Công suất hữu dụng (W) nhất quán theo quan hệ: P = p * Q
+  const power = calculatePower(pressure, flowRate);
   
   return {
-    pressure,
-    flowRate,
-    power,
+    pressure,   // Đơn vị Pascal
+    flowRate,   // Đơn vị m³/s
+    power,      // Đơn vị Watt
   };
 };
