@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hướng Dẫn Sử Dụng - Trình Giả Lập Máy Xúc Thủy Lực 2D</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #09090b;
+      --bg-card: #18181b;
+      --border-color: #27272a;
+      --text-main: #f4f4f5;
+      --text-muted: #a1a1aa;
+      --primary: #4f46e5;
+      --primary-hover: #6366f1;
+      --accent-orange: #d97706;
+      --accent-pink: #db2777;
+      --accent-red: #ef4444;
+      --accent-green: #10b981;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      line-height: 1.6;
+      padding: 2rem 1rem;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 3rem;
+      padding: 2.5rem;
+      background: linear-gradient(135deg, rgba(79, 70, 229, 0.15) 0%, rgba(219, 39, 119, 0.05) 100%);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+
+    h1 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 2.5rem;
+      font-weight: 700;
+      background: linear-gradient(to right, #a5b4fc, #f472b6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 0.5rem;
+    }
+
+    .version-tag {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      background-color: rgba(79, 70, 229, 0.2);
+      border: 1px solid var(--primary);
+      border-radius: 9999px;
+      font-size: 0.85rem;
+      color: #c7d2fe;
+      font-weight: 500;
+    }
+
+    h2 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.6rem;
+      margin-top: 2rem;
+      margin-bottom: 1rem;
+      border-left: 4px solid var(--primary);
+      padding-left: 12px;
+      color: #e4e4e7;
+    }
+
+    p {
+      color: var(--text-muted);
+      margin-bottom: 1rem;
+      font-size: 1rem;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    @media (max-width: 768px) {
+      .grid-2 {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1.5rem;
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-2px);
+      border-color: #3f3f46;
+    }
+
+    .card h3 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.25rem;
+      margin-bottom: 0.75rem;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    ul, ol {
+      margin-left: 1.5rem;
+      margin-bottom: 1rem;
+      color: var(--text-muted);
+    }
+
+    li {
+      margin-bottom: 0.5rem;
+    }
+
+    .highlight {
+      color: #e4e4e7;
+      font-weight: 600;
+    }
+
+    .badge-mode {
+      padding: 0.15rem 0.4rem;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+    .badge-manual { background-color: rgba(217, 119, 6, 0.2); color: #f59e0b; border: 1px solid #d97706; }
+    .badge-auto { background-color: rgba(79, 70, 229, 0.2); color: #818cf8; border: 1px solid #4f46e5; }
+
+    .alert {
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 1.5rem;
+      border-left: 4px solid;
+    }
+    .alert-warning {
+      background-color: rgba(239, 68, 68, 0.08);
+      border-color: var(--accent-red);
+      color: #fca5a5;
+    }
+    .alert-warning p {
+      color: #fca5a5;
+      margin-bottom: 0;
+    }
+
+    .code-block {
+      background-color: #0c0a09;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 1rem;
+      font-family: monospace;
+      font-size: 0.9rem;
+      color: #e7e5e4;
+      overflow-x: auto;
+      margin-bottom: 1.5rem;
+    }
+
+    .step-list {
+      list-style-type: none;
+      margin-left: 0;
+    }
+
+    .step-item {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 1.25rem;
+      align-items: flex-start;
+    }
+
+    .step-num {
+      background-color: var(--primary);
+      color: #ffffff;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      flex-shrink: 0;
+      font-size: 0.9rem;
+      margin-top: 2px;
+    }
+
+    .step-content h4 {
+      font-weight: 600;
+      color: var(--text-main);
+      margin-bottom: 0.25rem;
+    }
+
+    footer.doc-footer {
+      text-align: center;
+      margin-top: 4rem;
+      padding-top: 2rem;
+      border-top: 1px solid var(--border-color);
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>MÁY XÚC THỦY LỰC 2D</h1>
+      <p style="color: #c7d2fe; margin-bottom: 1rem;">Trình Giả Lập Giảng Dạy & Phân Tích Động Lực Học Thời Gian Thực</p>
+      <span class="version-tag">Tài Liệu Hướng Dẫn Sử Dụng — MVP v1.0.0</span>
+    </header>
+
+    <section>
+      <h2>1. Giới thiệu tổng quan</h2>
+      <p>Ứng dụng này là một công cụ trực quan hóa động học khâu khớp máy xúc 2D kết hợp mô phỏng thủy lực thể tích tĩnh. Sinh viên có thể tương tác trực tiếp với các tay đòn cơ học, thay đổi tải trọng và tay ga để quan sát các thông số năng lượng thủy lực thay đổi đồng bộ theo thời gian thực.</p>
+    </section>
+
+    <section>
+      <h2>2. Các chế độ vận hành chính</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3>
+            <span class="badge-mode badge-manual">MANUAL</span>
+            Chế độ điều khiển tay
+          </h3>
+          <p>Cho phép người học tự do kéo các thanh trượt (sliders) cơ cấu và tham số:</p>
+          <ul>
+            <li><span class="highlight">Cần nâng (Boom)</span>: Phạm vi từ <span class="highlight">-10° đến 70°</span>.</li>
+            <li><span class="highlight">Tay gầu (Arm)</span>: Phạm vi từ <span class="highlight">-10° đến 120°</span>.</li>
+            <li><span class="highlight">Gầu xúc (Bucket)</span>: Phạm vi từ <span class="highlight">-30° đến 90°</span>.</li>
+            <li><span class="highlight">Tải trọng (Payload)</span>: Khối lượng cản từ <span class="highlight">0 đến 2000 kg</span>.</li>
+            <li><span class="highlight">Tay ga (Throttle)</span>: Vòng quay bơm từ <span class="highlight">0% đến 100%</span>.</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h3>
+            <span class="badge-mode badge-auto">AUTOMATIC</span>
+            Chế độ tự động (Auto Cycle)
+          </h3>
+          <p>Mô phỏng 1 chu trình làm việc khép kín gồm 8 bước tuần tự:</p>
+          <ol>
+            <li><span class="highlight">IDLE</span>: Máy ở tư thế chuẩn bị sẵn sàng.</li>
+            <li><span class="highlight">APPROACH</span>: Hạ cần và duỗi tay gầu tiếp cận đống đất.</li>
+            <li><span class="highlight">LOWER</span>: Hạ gầu tiếp xúc mặt đất.</li>
+            <li><span class="highlight">SCOOP</span>: Cúp gầu để xúc đầy cát/vật liệu.</li>
+            <li><span class="highlight">LIFT</span>: Nâng cần nâng lên vị trí trung gian an toàn.</li>
+            <li><span class="highlight">DUMP</span>: Mở gầu đổ đất vào thùng xe/phễu chứa.</li>
+            <li><span class="highlight">RETURN</span>: Quay cần trục về vị trí chuẩn bị ban đầu.</li>
+            <li><span class="highlight">COMPLETE</span>: Kết thúc và dừng chu trình.</li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>3. Hệ thống chỉ số thủy lực & Telemetry</h2>
+      <p>TelemetryPanel hiển thị tức thời các chỉ số đo đạc từ lõi mô phỏng vật lý:</p>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="color: #60a5fa;">📐 Tọa độ & Vị trí đầu gầu</h3>
+          <ul>
+            <li><span class="highlight">Góc khớp</span>: Boom (°), Arm (°), Bucket (°) sau cắt biên.</li>
+            <li><span class="highlight">Tọa độ gầu (X, Y)</span>: Tính toán bằng Động học thuận lý thuyết từ Boom Pivot (mét).</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="color: #fbbf24;">⚡ Năng lượng thủy lực</h3>
+          <ul>
+            <li><span class="highlight">Áp suất hệ thống (Pressure)</span>: Hiển thị đồng thời dạng <span class="highlight">bar</span> và <span class="highlight">psi</span>. Chịu ảnh hưởng bởi Tải trọng gầu và Hiệu ứng cánh tay đòn (boom càng duỗi ngang áp suất càng cao).</li>
+            <li><span class="highlight">Lưu lượng dầu (Flow Rate)</span>: Hiển thị dạng <span class="highlight">L/min</span> và <span class="highlight">m³/s</span>. Tỷ lệ trực tiếp với Tay ga động cơ.</li>
+            <li><span class="highlight">Công suất (Power)</span>: Hiển thị dạng <span class="highlight">kW</span> và <span class="highlight">HP</span>. Tích số trực tiếp của Áp suất và Lưu lượng.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>4. Cơ chế cảnh báo lỗi & Bảo vệ an toàn</h2>
+      <p>Ứng dụng tích hợp hệ thống chẩn đoán lỗi động lực học, kích hoạt khi máy làm việc quá giới hạn kỹ thuật:</p>
+      <div class="card" style="border-color: rgba(239, 68, 68, 0.4); margin-bottom: 2rem;">
+        <ul style="margin-left: 1rem; list-style-type: none;">
+          <li style="margin-bottom: 1rem;">
+            <span class="badge-mode" style="background-color: rgba(239, 68, 68, 0.2); color: #ef4444; border: 1px solid #ef4444;">OVERLOAD</span>
+            <strong style="color: #f3f4f6; margin-left: 8px;">Quá tải cơ học (Critical)</strong>
+            <p style="margin-top: 4px; font-size: 0.95rem;">Kích hoạt khi khối lượng vật liệu trong gầu xúc vượt quá ngưỡng định mức an toàn (<span class="highlight">1600 kg</span>) hoặc áp suất hệ thống thô vượt ngưỡng <span class="highlight">220 bar</span>.</p>
+          </li>
+          <li>
+            <span class="badge-mode" style="background-color: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid #f59e0b;">RELIEF_ACTIVE</span>
+            <strong style="color: #f3f4f6; margin-left: 8px;">Xả van an toàn áp suất (Warning)</strong>
+            <p style="margin-top: 4px; font-size: 0.95rem;">Kích hoạt khi góc nâng cần Boom ở vị trí cực thấp duỗi ngang (momen cản lớn nhất) kết hợp tải trọng nặng khiến áp suất thô đạt đỉnh <span class="highlight">250 bar</span>. Van an toàn áp suất (Relief Valve) lập tức mở để bảo vệ đường ống, dầu bị xả tràn về thùng chứa.</p>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <section>
+      <h2>5. Kịch bản chạy thử nghiệm nhanh (Demo Flow)</h2>
+      <p>Người học có thể thực hiện theo luồng hướng dẫn sau để nhanh chóng kiểm nghiệm toàn bộ tính năng:</p>
+      
+      <div class="step-list">
+        <div class="step-item">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <h4>Kiểm tra điều khiển tay (Manual)</h4>
+            <p>Trượt slider Boom nâng lên hạ xuống, gạt slider Gầu Bucket gập vào mở ra để thấy chuyển động hình học đồng bộ trên màn hình 2D.</p>
+          </div>
+        </div>
+
+        <div class="step-item">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <h4>Thử nghiệm Preset nội suy</h4>
+            <p>Click nút <span class="highlight">Tư thế đào (Hạ gầu)</span>. Quan sát máy xúc tự động nội suy chuyển động mượt mà bằng quỹ đạo đường cong Cubic Ease-in-out trong vòng 800ms để định vị vào vị trí đào.</p>
+          </div>
+        </div>
+
+        <div class="step-item">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <h4>Kích hoạt quá tải hệ thống</h4>
+            <p>Kéo slider <span class="highlight">Tải trọng gầu (Payload)</span> lên tối đa 1800 kg. Nhãn cảnh báo <span class="highlight">OVERLOAD</span> nhấp nháy đỏ sẽ ngay lập tức sáng lên tại WarningPanel góc phải.</p>
+          </div>
+        </div>
+
+        <div class="step-item">
+          <div class="step-num">4</div>
+          <div class="step-content">
+            <h4>Kích hoạt van xả an toàn</h4>
+            <p>Dịch chuyển slider Boom hạ thấp nhất về góc <span class="highlight">-10°</span> trong khi Payload vẫn ở mức cao. Momen đòn bẩy đạt cực đại làm áp suất hệ thống tăng vọt chạm đỉnh 250 bar. Cảnh báo <span class="highlight">RELIEF_ACTIVE</span> sẽ sáng lên cảnh báo van an toàn đang hoạt động.</p>
+          </div>
+        </div>
+
+        <div class="step-item">
+          <div class="step-num">5</div>
+          <div class="step-content">
+            <h4>Bắt đầu Chu trình tự động</h4>
+            <p>Click nút <span class="highlight">Chạy Chu Trình</span>. Máy tự động chuyển chế độ vận hành sang AUTOMATIC, khóa điều khiển tay, và chạy qua các bước xúc đất, nâng cần, đổ đất và thu về. Theo dõi tiến độ bước và tiến độ tổng thể cập nhật liên tục.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="alert alert-warning">
+      <p>⚠️ <strong>Cảnh báo học thuật:</strong> Trình mô phỏng này áp dụng các mô hình động học và thủy lực tĩnh đơn giản hóa phục vụ mục đích giảng dạy lý thuyết đại học. Các thông số không được dùng cho việc thiết kế chế tạo hoặc vận hành các loại máy xúc thực tế ngoài công trường.</p>
+    </div>
+
+    <footer class="doc-footer">
+      <p>© 2026 Dự án Máy Xúc Thủy Lực Giảng Dạy. Tất cả các quyền được bảo lưu.</p>
+    </footer>
+  </div>
+</body>
+</html>
