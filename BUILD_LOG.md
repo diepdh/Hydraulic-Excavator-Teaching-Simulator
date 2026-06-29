@@ -345,6 +345,43 @@ Mỗi JOB phải có một mục riêng, giữ nguyên lịch sử thay vì ghi 
   - Dự án hiện đã có cấu hình và chạy trơn tru cả 3 tầng kiểm thử: Unit Test (Vitest), Component/Integration Test (RTL), và E2E Browser Test (Playwright) theo đúng phân tầng kiến trúc kim tự tháp đã chốt.
   - Tài liệu README.md được bổ sung đầy đủ chi tiết và phân tích known limitations.
 
+## Post-MVP Graphic & Motion Enhancements Log
+
+- Trạng thái: DONE
+- Thời gian bắt đầu: 2026-06-29T15:41:30+07:00
+- Thời gian kết thúc: 2026-06-29T16:08:00+07:00
+- Phiên bản code: commit `85cd7e0`
+- File đã sửa:
+  - [src/config/geometry.ts](file:///C:/Users/dohuy/Downloads/01.%20Documents/May_thuy_luc/src/config/geometry.ts) (Sửa đổi)
+  - [src/components/SimulationScene/SimulationScene.tsx](file:///C:/Users/dohuy/Downloads/01.%20Documents/May_thuy_luc/src/components/SimulationScene/SimulationScene.tsx) (Sửa đổi)
+  - [src/components/SimulationScene/ExcavatorModel.tsx](file:///C:/Users/dohuy/Downloads/01.%20Documents/May_thuy_luc/src/components/SimulationScene/ExcavatorModel.tsx) (Sửa đổi)
+  - [tests/unit/kinematics/kinematics.test.ts](file:///C:/Users/dohuy/Downloads/01.%20Documents/May_thuy_luc/tests/unit/kinematics/kinematics.test.ts) (Sửa đổi)
+- Lệnh đã chạy:
+  - `npm run typecheck`
+  - `npm run test`
+  - `npm run test:e2e`
+  - `npm run build`
+- Kết quả kiểm tra:
+  - `npm run typecheck` pass.
+  - `npm run test` pass (32/32 tests pass).
+  - `npm run test:e2e` pass (5/5 Playwright tests pass).
+  - `npm run build` pass.
+- Chi tiết cải tiến:
+  - **Khắc phục lỗi lệch khung hình**: Thay đổi scale từ 80 xuống 70, dịch gốc máy baseX từ 250 về 200, baseY từ 350 về 380, và nới rộng viewBox của SVG thành 950x550. Đảm bảo toàn bộ chuyển động vươn tối đa hoặc nâng cao không bị cắt viền.
+  - **Cải tiến thẩm mỹ đồ họa**:
+    - Vẽ bánh xích thép màu xám đen có các con lăn dẫn động chân thực.
+    - Vẽ cabin màu vàng-đen có kính buồng lái màu xanh trong suốt và ghế ngồi tài xế.
+    - Thiết kế lại các khâu đòn (Boom, Arm, Bucket) bằng SVG Path cong uốn lượn chịu lực sắc sảo và răng gầu đúc kim loại nhọn bọc thép.
+    - Áp dụng linear/radial gradients cho tất cả cấu kiện kim loại để tạo chiều sâu nổi khối.
+  - **Hiện thực hóa 3 cụm Xy lanh Thủy lực động**: Tính toán lượng giác điểm neo để vẽ 3 cụm xy lanh tự động co duỗi piston chrome bóng loáng và tự xoay khớp chốt theo chuyển động của cần đòn Boom-Arm-Bucket.
+  - **Trực quan hóa kịch bản múc & đổ đất**:
+    - Vẽ đống đất (Soil pile) màu nâu sẫm bên dưới gầm gầu xúc.
+    - Vẽ phễu chứa đất (Dump Hopper) công nghiệp lớn bên phải.
+    - Thêm mảng cát trong gầu xuất hiện động khi múc lên (`SCOOP`, `LIFT`, `DUMP`).
+    - Thêm hiệu ứng hạt cát chảy/rơi tự do từ gầu xuống phễu khi chu trình tự động ở bước `DUMP`.
+  - **Động hóa bộ kiểm thử**: Sửa test case kinematics đổi hằng số hardcode sang đọc động `geometryConfig` để thích ứng với scale và pivot mới.
+
+
 
 
 
